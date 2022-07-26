@@ -9,13 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Container\SEC.ContainerManage\SEC.Container.csproj" />
-    <ProjectReference Include="..\Drivers\SEC.Driver\SEC.Driver.csproj" />
-    <ProjectReference Include="..\Drivers\SEC.FinsDriver\SEC.FinsDriver.csproj" />
-    <ProjectReference Include="..\Drivers\SEC.MC3EDriver\SEC.MC3EDriver.csproj" />
-    <ProjectReference Include="..\Drivers\SEC.ModbusRtuDriver\SEC.ModbusRtuDriver.csproj" />
-    <ProjectReference Include="..\Drivers\SEC.ModebusTcpDriver\SEC.ModebusTcpDriver.csproj" />
-    <ProjectReference Include="..\SEC.Util\SEC.Util.csproj" />
+    <ProjectReference Include="..\SEC.ContainerManage\SEC.Container.csproj" />
+    <ProjectReference Include="..\SEC.Drivers\SEC.Driver\SEC.Driver.csproj" />
+    <ProjectReference Include="..\SEC.Drivers\SEC.FinsDriver\SEC.FinsDriver.csproj" />
+    <ProjectReference Include="..\SEC.Drivers\SEC.MC3EDriver\SEC.MC3EDriver.csproj" />
+    <ProjectReference Include="..\SEC.Drivers\SEC.ModbusRtuDriver\SEC.ModbusRtuDriver.csproj" />
+    <ProjectReference Include="..\SEC.Drivers\SEC.ModebusTcpDriver\SEC.ModebusTcpDriver.csproj" />
   </ItemGroup>
 
   <ItemGroup>
