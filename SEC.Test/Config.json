@@ -1,0 +1,228 @@
+{
+  "Name": "www",
+  "EQU": "f",
+  "DriverType": "f",
+  "Tags": [
+    {
+      "TagName": "tag1",
+      "Address": "31000",
+      "DataType": "Short",
+      "ClientAccess": "R/W",
+      "EngUnits": "kg",
+      "Description": "称重结果",
+      "DataLength": 1,
+      "Sort": "CDAB",
+      "StationNumber": 1
+    },
+    {
+      "TagName": "tag2",
+      "Address": "31020",
+      "DataType": "Short",
+      "ClientAccess": "R/W",
+      "EngUnits": "kg",
+      "Description": "实时重量",
+      "DataLength": 1,
+      "Sort": "CDAB",
+      "StationNumber": 1
+    },
+    {
+      "TagName": "tag3",
+      "Address": "31001",
+      "DataType": "Uint",
+      "ClientAccess": "R/W",
+      "EngUnits": "kg",
+      "Description": "超重个数",
+      "DataLength": 1,
+      "Sort": "CDAB",
+      "StationNumber": 1
+    },
+    {
+      "TagName": "tag4",
+      "Address": "31003",
+      "DataType": "Uint",
+      "ClientAccess": "R/W",
+      "EngUnits": "kg",
+      "Description": "合格个数",
+      "DataLength": 1,
+      "Sort": "CDAB",
+      "StationNumber": 1
+    },
+    {
+      "TagName": "tag5",
+      "Address": "31005",
+      "DataType": "Uint",
+      "ClientAccess": "R/W",
+      "EngUnits": "kg",
+      "Description": "欠重个数",
+      "DataLength": 1,
+      "Sort": "CDAB",
+      "StationNumber": 1
+    },
+    {
+      "TagName": "tag6",
+      "Address": "31007",
+      "DataType": "Uint",
+      "ClientAccess": "R/W",
+      "EngUnits": "kg",
+      "Description": "总重量",
+      "DataLength": 1,
+      "Sort": "CDAB",
+      "StationNumber": 1
+    },
+    {
+      "TagName": "tag7",
+      "Address": "31009",
+      "DataType": "Uint",
+      "ClientAccess": "R/W",
+      "EngUnits": "kg",
+      "Description": "总数量",
+      "DataLength": 1,
+      "Sort": "CDAB",
+      "StationNumber": 1
+    },
+    {
+      "TagName": "tag8",
+      "Address": "31011",
+      "DataType": "UShort",
+      "ClientAccess": "R/W",
+      "EngUnits": "kg",
+      "Description": "平均单重",
+      "DataLength": 1,
+      "Sort": "CDAB",
+      "StationNumber": 1
+    },
+    {
+      "TagName": "tag9",
+      "Address": "31012",
+      "DataType": "UShort",
+      "ClientAccess": "R/W",
+      "EngUnits": "%",
+      "Description": "合格率",
+      "DataLength": 1,
+      "Sort": "CDAB",
+      "StationNumber": 1
+    },
+    {
+      "TagName": "tag10",
+      "Address": "310999",
+      "DataType": "Short",
+      "ClientAccess": "R/W",
+      "EngUnits": "",
+      "Description": "使用中配方编号",
+      "DataLength": 1,
+      "Sort": "CDAB",
+      "StationNumber": 1
+    },
+    {
+      "TagName": "tag11",
+      "Address": "311000",
+      "DataType": "String",
+      "ClientAccess": "R/W",
+      "EngUnits": "",
+      "Description": "使用中配方名称",
+      "Coding": "ASCII",
+      "DataLength": 8,
+      "Sort": "CDAB",
+      "StationNumber": 1
+    },
+    {
+      "TagName": "tag12",
+      "Address": "311009",
+      "DataType": "Short",
+      "ClientAccess": "R/W",
+      "EngUnits": "",
+      "Description": "使用中配方上限",
+      "DataLength": 1,
+      "Sort": "CDAB",
+      "StationNumber": 1
+    },
+    {
+      "TagName": "tag13",
+      "Address": "311010",
+      "DataType": "Short",
+      "ClientAccess": "R/W",
+      "EngUnits": "",
+      "Description": "使用中配方目标重量",
+      "DataLength": 1,
+      "Sort": "CDAB",
+      "StationNumber": 1
+    },
+    {
+      "TagName": "tag14",
+      "Address": "311011",
+      "DataType": "Short",
+      "ClientAccess": "R/W",
+      "EngUnits": "",
+      "Description": "使用中配方下限",
+      "DataLength": 1,
+      "Sort": "CDAB",
+      "StationNumber": 1
+    },
+    {
+      "TagName": "tag15",
+      "Address": "101000",
+      "DataType": "Boole",
+      "ClientAccess": "R/W",
+      "EngUnits": "",
+      "Description": "运行状态",
+      "DataLength": 1,
+      "Sort": "CDAB",
+      "StationNumber": 1
+    },
+    {
+      "TagName": "tag16",
+      "Address": "101001",
+      "DataType": "Boole",
+      "ClientAccess": "R/W",
+      "EngUnits": "",
+      "Description": "下超",
+      "DataLength": 1,
+      "Sort": "CDAB",
+      "StationNumber": 1
+    },
+    {
+      "TagName": "tag17",
+      "Address": "101002",
+      "DataType": "Boole",
+      "ClientAccess": "R/W",
+      "EngUnits": "",
+      "Description": "合格",
+      "DataLength": 1,
+      "Sort": "CDAB",
+      "StationNumber": 1
+    },
+    {
+      "TagName": "tag18",
+      "Address": "101003",
+      "DataType": "Boole",
+      "ClientAccess": "R/W",
+      "EngUnits": "",
+      "Description": "上超",
+      "DataLength": 1,
+      "Sort": "CDAB",
+      "StationNumber": 1
+    },
+    {
+      "TagName": "tag19",
+      "Address": "400020",
+      "DataType": "Short",
+      "ClientAccess": "R/W",
+      "EngUnits": "",
+      "Description": "启动停止",
+      "DataLength": 1,
+      "Sort": "CDAB",
+      "StationNumber": 1
+    },
+    {
+      "TagName": "tag20",
+      "Address": "400021",
+      "DataType": "Short",
+      "ClientAccess": "R/W",
+      "EngUnits": "",
+      "Description": "写入配方编直接切换配方",
+      "DataLength": 1,
+      "Sort": "CDAB",
+      "StationNumber": 1
+    }
+  ]
+}

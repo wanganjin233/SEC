@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Container\SEC.ContainerManage\SEC.Container.csproj" />
+    <ProjectReference Include="..\Drivers\SEC.Driver\SEC.Driver.csproj" />
+    <ProjectReference Include="..\Drivers\SEC.FinsDriver\SEC.FinsDriver.csproj" />
+    <ProjectReference Include="..\Drivers\SEC.MC3EDriver\SEC.MC3EDriver.csproj" />
+    <ProjectReference Include="..\Drivers\SEC.ModbusRtuDriver\SEC.ModbusRtuDriver.csproj" />
+    <ProjectReference Include="..\Drivers\SEC.ModebusTcpDriver\SEC.ModebusTcpDriver.csproj" />
+    <ProjectReference Include="..\SEC.Util\SEC.Util.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Config.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties config_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
+
+</Project>
