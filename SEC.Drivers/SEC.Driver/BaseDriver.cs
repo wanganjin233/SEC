@@ -88,7 +88,7 @@ namespace SEC.Driver
                 }
                 else
                 {
-                    Communication.Data?.ReConnect();
+                    Communication.Data?.Connect();
                 }
                 return null;
             }
@@ -205,26 +205,30 @@ namespace SEC.Driver
             if (IsRun == false)
             {
                 IsRun = true;
-                AllTagDic.Values.ToList().ForEach(tag => tag.Cycle = cycle);
-                ThreadPool.QueueUserWorkItem(state =>
+                using (Communication.Write())
                 {
-                    while (IsRun)
-                    {
-                        foreach (var tagGroup in TagGroups)
-                        {
-                            if (tagGroup.Command == null) continue;
-                            byte[]? BodyByte = SendCommand(tagGroup.Command);
-                            tagGroup.Tags.ForEach(p =>
-                            {
-                                p.UpdateValue = BodyByte?
-                                .Skip((int)((p.Location - tagGroup.StartAddress) * 2 / WordLength))
-                                .Take(p.DataLength)
-                                .ToArray();
-                            });
-                        }
-                        Thread.Sleep(cycle);
-                    }
-                });
+                    Communication.Data?.Connect();
+                }
+                AllTagDic.Values.ToList().ForEach(tag => tag.Cycle = cycle);
+                Task.Run(async () =>
+               {
+                   while (IsRun)
+                   {
+                       foreach (var tagGroup in TagGroups)
+                       {
+                           if (tagGroup.Command == null) continue;
+                           byte[]? BodyByte = SendCommand(tagGroup.Command);
+                           tagGroup.Tags.ForEach(p =>
+                           {
+                               p.UpdateValue = BodyByte?
+                               .Skip((int)((p.Location - tagGroup.StartAddress) * 2 / WordLength))
+                               .Take(p.DataLength)
+                               .ToArray();
+                           });
+                       }
+                       await Task.Delay(cycle);
+                   }
+               });
             }
         }
         /// <summary>

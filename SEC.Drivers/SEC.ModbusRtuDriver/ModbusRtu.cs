@@ -1,7 +1,7 @@
 ﻿using SEC.Driver;
 using SEC.Util;
 
-namespace SEC.ModbusRtuDriver
+namespace SEC.Driver.ModbusRtu
 {
     public class ModbusRtu : BaseDriver
     {

@@ -70,17 +70,17 @@ namespace SEC.Driver
                 "1.5" => StopBits.OnePointFive,
                 "2" => StopBits.Two,
                 _ => StopBits.None
-            };
-            Connect();
+            }; 
         }
         /// <summary>
         /// 连接
         /// </summary>
         /// <returns></returns>
-        private bool Connect()
+        public bool Connect()
         {
             try
             {
+                Close();
                 using (serialPort.Write())
                 {
                     if (!Connected)
@@ -167,15 +167,6 @@ namespace SEC.Driver
         {
             Close();
             GC.SuppressFinalize(this);
-        }
-        /// <summary>
-        /// 重新连接
-        /// </summary>
-        /// <returns></returns>
-        public bool ReConnect()
-        {
-            Close();
-            return Connect();
-        }
+        } 
     }
 }

@@ -2,7 +2,7 @@
 
 namespace SEC.Driver
 {
-    public class TCPClient : ICommunication, IDisposable
+    public class TCPClient : ICommunication
     {
         /// <summary>
         /// 连接套接字
@@ -25,7 +25,7 @@ namespace SEC.Driver
         /// <summary>
         /// 接收缓存
         /// </summary>
-        private byte[] Buffer { get; set; }
+        private byte[] Buffer { get; set; }= new byte[1024];
         /// <summary>
         /// 连接状态
         /// </summary>
@@ -33,7 +33,7 @@ namespace SEC.Driver
         {
             get
             {
-                return clientSocket?.Connected ?? false; 
+                return clientSocket?.Connected ?? false;
             }
         }
         /// <summary>
@@ -45,37 +45,25 @@ namespace SEC.Driver
         {
             ipAddress = ServerIP;
             port = serverPort;
-            _TimeOut = timeOut;
-            if (!Connect())
-            {
-                throw new Exception("连接驱动失败");
-            }; 
-            Buffer = new byte[clientSocket.ReceiveBufferSize]; 
-        }
-        /// <summary>
-        /// 重新连接
-        /// </summary>
-        /// <returns></returns>
-        public bool ReConnect()
-        {
-            Close();
-            return Connect();
-        }
+            _TimeOut = timeOut;  
+        } 
         /// <summary>
         /// 连接
         /// </summary> 
         /// <returns></returns>
-        private bool Connect()
+        public bool Connect()
         {
             try
-            { 
+            {
+                Close();
                 if (!Connected)
                 {
                     clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                     clientSocket.SendTimeout = _TimeOut;
                     clientSocket.ReceiveTimeout = _TimeOut;
                     clientSocket.Connect(IpAddress, Port);
-                } 
+                    Buffer = new byte[clientSocket.ReceiveBufferSize];
+                }
             }
             catch (Exception)
             {
@@ -88,7 +76,7 @@ namespace SEC.Driver
         /// </summary>
         /// <returns></returns>
         public byte[]? Receive()
-        { 
+        {
             if (Connected)
             {
                 try
@@ -106,7 +94,7 @@ namespace SEC.Driver
                     return null;
                 }
             }
-            return null; 
+            return null;
         }
         /// <summary>
         /// 发送
@@ -114,7 +102,7 @@ namespace SEC.Driver
         /// <param name="buffer"></param>
         /// <returns></returns>
         public bool Send(byte[] buffer)
-        { 
+        {
             if (Connected)
             {
                 try
@@ -127,7 +115,7 @@ namespace SEC.Driver
                     return false;
                 }
             }
-            return false; 
+            return false;
         }
         /// <summary>
         /// 释放
@@ -141,13 +129,12 @@ namespace SEC.Driver
         /// 关闭连接
         /// </summary>
         public void Close()
-        { 
+        {
             if (Connected)
                 clientSocket?.Disconnect(false);
             clientSocket?.Close();
             clientSocket?.Dispose();
-            clientSocket = null;
-
+            clientSocket = null; 
         }
     }
 }

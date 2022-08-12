@@ -19,13 +19,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Drivers", "Drivers", "{BDEF
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SEC.Driver", "SEC.Drivers\SEC.Driver\SEC.Driver.csproj", "{F64194E6-5CB9-4784-A586-EA75A4953D6A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SEC.FinsDriver", "SEC.Drivers\SEC.FinsDriver\SEC.FinsDriver.csproj", "{FADD4C62-D502-4866-B199-4D9548469302}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SEC.Driver.Fins", "SEC.Drivers\SEC.FinsDriver\SEC.Driver.Fins.csproj", "{FADD4C62-D502-4866-B199-4D9548469302}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SEC.MC3EDriver", "SEC.Drivers\SEC.MC3EDriver\SEC.MC3EDriver.csproj", "{1C46256B-8B52-4E2A-B3B0-B273E043F90F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SEC.Driver.MC3E", "SEC.Drivers\SEC.MC3EDriver\SEC.Driver.MC3E.csproj", "{1C46256B-8B52-4E2A-B3B0-B273E043F90F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SEC.ModbusRtuDriver", "SEC.Drivers\SEC.ModbusRtuDriver\SEC.ModbusRtuDriver.csproj", "{A35472F9-E2B0-406A-A372-20F1B554729C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SEC.Driver.ModbusRtu", "SEC.Drivers\SEC.ModbusRtuDriver\SEC.Driver.ModbusRtu.csproj", "{A35472F9-E2B0-406A-A372-20F1B554729C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SEC.ModebusTcpDriver", "SEC.Drivers\SEC.ModebusTcpDriver\SEC.ModebusTcpDriver.csproj", "{DBF38E98-D669-4962-85B4-8A327D588F22}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SEC.Driver.ModebusTcp", "SEC.Drivers\SEC.ModebusTcpDriver\SEC.Driver.ModebusTcp.csproj", "{DBF38E98-D669-4962-85B4-8A327D588F22}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SEC.Studio", "SEC.Studio\SEC.Studio.csproj", "{9964684A-CB9B-4B64-AF5F-744E97A87C6C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SEC.Style", "SEC.Style\SEC.Style.csproj", "{5ED0CBE6-B891-49BD-867E-1EE289165E98}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -73,6 +77,14 @@ Global
 		{DBF38E98-D669-4962-85B4-8A327D588F22}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DBF38E98-D669-4962-85B4-8A327D588F22}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DBF38E98-D669-4962-85B4-8A327D588F22}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9964684A-CB9B-4B64-AF5F-744E97A87C6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9964684A-CB9B-4B64-AF5F-744E97A87C6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9964684A-CB9B-4B64-AF5F-744E97A87C6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9964684A-CB9B-4B64-AF5F-744E97A87C6C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5ED0CBE6-B891-49BD-867E-1EE289165E98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5ED0CBE6-B891-49BD-867E-1EE289165E98}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5ED0CBE6-B891-49BD-867E-1EE289165E98}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5ED0CBE6-B891-49BD-867E-1EE289165E98}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

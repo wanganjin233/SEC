@@ -1,9 +1,9 @@
 
 using SEC.Driver;
-using SEC.FinsDriver;
-using SEC.MC3EDriver;
-using SEC.ModbusRtuDriver;
-using SEC.ModebusTcpDriver;
+using SEC.Driver.Fins;
+using SEC.Driver.MC3E;
+using SEC.Driver.ModbusRtu;
+using SEC.Driver.ModebusTcp;
 using System.Text;
 
 namespace SEC.Test
@@ -23,24 +23,24 @@ namespace SEC.Test
                 try
                 {
                     if (!mC3Drivers.ContainsKey(DriveChoose.SelectedIndex))
-                    { 
+                    {
                         switch (DriveChoose.SelectedIndex)
                         {
-                            case 1: 
-                                mC3EEthernet = new  MC3E(new TCPClient(IPAddress.Text, _Port)) ; 
+                            case 1:
+                                mC3EEthernet = new MC3E(new TCPClient(IPAddress.Text, _Port));
                                 break;
                             case 0:
                                 mC3EEthernet = new Fins(new TCPClient(IPAddress.Text, _Port));
                                 break;
                             case 2:
-                                mC3EEthernet = new ModbusRtu(new SerialPort( "COM3", 9600, 8, "None", "1"));
+                                mC3EEthernet = new ModbusRtu(new SerialPort("COM3", 9600, 8, "None", "1"));
                                 break;
                             case 3:
                                 mC3EEthernet = new ModbusRtu(new TCPClient(IPAddress.Text, _Port));
                                 break;
                             case 4:
                                 mC3EEthernet = new ModbusTcp(new TCPClient(IPAddress.Text, _Port));
-                                break; 
+                                break;
                         }
                         if (mC3EEthernet != null)
                         {

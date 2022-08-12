@@ -61,7 +61,7 @@ namespace ssdb
             buf.WriteByte((byte)'\n');
 
             byte[] bs = buf.GetBuffer();
-            sock.GetStream().Write(bs, 0, (int)buf.Length);
+            sock?.GetStream().Write(bs, 0, (int)buf.Length);
             //Console.Write(Encoding.Default.GetString(bs, 0, (int)buf.Length));
             return recv();
         }
@@ -76,7 +76,7 @@ namespace ssdb
                     return ret;
                 }
                 byte[] bs = new byte[8192];
-                int len = sock.GetStream().Read(bs, 0, bs.Length);
+                int len = sock?.GetStream().Read(bs, 0, bs.Length)??0;
                 //Console.WriteLine("<< " + Encoding.Default.GetString(bs));
                 recv_buf.Write(bs, 0, len);
             }

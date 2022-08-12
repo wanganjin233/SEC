@@ -1,4 +1,4 @@
-﻿ namespace SEC.ModebusTcpDriver
+﻿namespace SEC.Driver.ModebusTcp
 {
     /// <summary>
     /// 指令协议生成 
@@ -44,16 +44,16 @@
         {
             var addBuffer = BitConverter.GetBytes(address);
             byte length = (byte)(isBit ? value.Length / 8 + 1 : value.Length);
-            byte[] commandBytes = new byte[13 + length];
-            commandBytes[5] = (byte)(length + 7);
-            commandBytes[6] = stationNumber;
-            commandBytes[7] = (byte)(isBit ? 0x0f : 0x10);
-            commandBytes[8] = addBuffer[1];
-            commandBytes[9] = addBuffer[0];
             var valueLength = BitConverter.GetBytes((ushort)(isBit ? value.Length : value.Length / 2));
-            commandBytes[10] = valueLength[1];
-            commandBytes[11] = valueLength[0];
-            commandBytes[12] = length;
+            byte[] commandBytes = new byte[13 + length];
+            commandBytes[5] = (byte)(length + 7);//字节长度
+            commandBytes[6] = stationNumber;//站号
+            commandBytes[7] = (byte)(isBit ? 0x0f : 0x10);//线圈或寄存器
+            commandBytes[8] = addBuffer[1];//开始地址
+            commandBytes[9] = addBuffer[0];// 
+            commandBytes[10] = valueLength[1];//长度
+            commandBytes[11] = valueLength[0];//
+            commandBytes[12] = length;//byte长度
             if (isBit)
             {
                 for (int i = 0; i < value.Length; i++)

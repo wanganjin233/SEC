@@ -1,4 +1,4 @@
-﻿namespace SEC.ModbusRtuDriver
+﻿namespace SEC.Driver.ModbusRtu
 {
     /// <summary>
     /// 指令协议生成 
@@ -58,7 +58,7 @@
                 {
                     if (BitConverter.ToBoolean(value, i))
                     {
-                        commandBytes[7 + i / 8] = (byte)(commandBytes[7 + i / 8] | (0x01 << i));
+                        commandBytes[7 + i / 8] = (byte)(commandBytes[7 + i / 8] | 0x01 << i);
                     }
                 }
                 return commandBytes.CRC16Calc();
@@ -94,7 +94,7 @@
                     for (int j = 0; j < 8; j++)
                     {
                         if ((CRCResult & 1) == 1)
-                            CRCResult = (CRCResult >> 1) ^ 0xA001;
+                            CRCResult = CRCResult >> 1 ^ 0xA001;
                         else CRCResult >>= 1;
                     }
                 }

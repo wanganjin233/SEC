@@ -1,7 +1,7 @@
 ﻿using SEC.Driver;
 using SEC.Util;
 
-namespace SEC.ModebusTcpDriver
+namespace SEC.Driver.ModebusTcp
 {
     internal static class DriverExtend
     {

@@ -2,6 +2,9 @@
 {
     public class TagInfo
     {
+        /// <summary>
+        /// 站号
+        /// </summary>
         public byte StationNumber { get; set; } = 1;
         /// <summary>
         /// 变量类型

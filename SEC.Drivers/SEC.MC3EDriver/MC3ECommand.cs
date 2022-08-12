@@ -1,4 +1,4 @@
-﻿namespace SEC.MC3EDriver
+﻿namespace SEC.Driver.MC3E
 {
     /// <summary>
     /// 指令协议生成 
@@ -103,7 +103,7 @@
                     commandBytes[21 + i / 2] += (byte)(i % 2 == 0 ? value[i] * 16 : value[i]);
                 }
             else
-                value.CopyTo(commandBytes, 21); 
+                value.CopyTo(commandBytes, 21);
             return commandBytes;
         }
         /// <summary>

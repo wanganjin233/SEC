@@ -1,7 +1,7 @@
 ﻿using SEC.Driver;
 using SEC.Util;
 
-namespace SEC.ModebusTcpDriver
+namespace SEC.Driver.ModebusTcp
 {
     public class ModbusTcp : BaseDriver
     {
@@ -44,7 +44,11 @@ namespace SEC.ModebusTcpDriver
             }
             return null;
         }
-
+        /// <summary>
+        /// 地址处理
+        /// </summary>
+        /// <param name="tag"></param>
+        /// <exception cref="Exception">未找到地址类型</exception>
         protected override void AddressParsing(Tag tag)
         {
             char addressType = tag.Address[0];

@@ -1,0 +1,26 @@
+﻿<UserControl x:Class="SEC.Style.IpAddress"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:SEC.Style"  
+             xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
+             mc:Ignorable="d" >
+    <UniformGrid Columns="4">
+        <DockPanel Margin="1,0"  >
+            <TextBlock VerticalAlignment="Center" DockPanel.Dock="Right" Text="." />
+            <local:NumbericTextBox x:Name="IPPart1" MaxValue="255" MinValue="0" Precision="0" KeyDown="IPPart1_KeyDown"   />
+        </DockPanel>
+        <DockPanel Margin="1,0"  >
+            <TextBlock VerticalAlignment="Center" DockPanel.Dock="Right" Text="." />
+            <local:NumbericTextBox x:Name="IPPart2" MaxValue="255" MinValue="0" Precision="0"  KeyDown="IPPart_KeyDown" />
+        </DockPanel>
+        <DockPanel Margin="1,0">
+            <TextBlock VerticalAlignment="Center" DockPanel.Dock="Right" Text="." />
+            <local:NumbericTextBox x:Name="IPPart3" MaxValue="255" MinValue="0"  Precision="0"  KeyDown="IPPart_KeyDown" />
+        </DockPanel >
+        <DockPanel Margin="1,0">
+            <local:NumbericTextBox x:Name="IPPart4"  MaxValue="255" MinValue="0" Precision="0"  KeyDown="IPPart_KeyDown" />
+        </DockPanel >
+    </UniformGrid>
+</UserControl>

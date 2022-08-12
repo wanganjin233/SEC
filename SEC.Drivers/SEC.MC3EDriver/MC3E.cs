@@ -1,13 +1,13 @@
 ﻿using SEC.Driver;
 using System.Text.RegularExpressions;
 
-namespace SEC.MC3EDriver
+namespace SEC.Driver.MC3E
 {
     public class MC3E : BaseDriver
     {
         public MC3E(ICommunication communication) : base(communication)
         {
-        } 
+        }
         /// <summary>
         /// 网络号，通常为0
         /// </summary>
@@ -30,7 +30,7 @@ namespace SEC.MC3EDriver
             get;
             set;
         } = 0;
-         
+
 
         /// <summary>
         /// 批量读取原始数据
@@ -47,11 +47,11 @@ namespace SEC.MC3EDriver
                 && addressType.ToEnumByte(out AddressTypeEnum _AddressType))
             {
                 byte[] command = _address.BatchReadCommand(_AddressType, length, isBit);
-                return  SendWait(command).GetBody(isBit, length);
+                return SendWait(command).GetBody(isBit, length);
             }
             return null;
         }
-         
+
 
         /// <summary>
         /// 批量写入原始数据
@@ -68,9 +68,9 @@ namespace SEC.MC3EDriver
                 && addressType.ToEnumByte(out AddressTypeEnum _AddressType))
             {
                 byte[] command = _address.BatchWriteCommand(_AddressType, Value, isBit);
-                return  SendWait(command).GetBody(false, Value.Length) != null;
+                return SendWait(command).GetBody(false, Value.Length) != null;
             }
             return false;
-        } 
+        }
     }
 }

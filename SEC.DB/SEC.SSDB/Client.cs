@@ -25,19 +25,19 @@ namespace ssdb
             link?.close();
         }
 
-        public List<byte[]> request(string cmd, params string[] args)
+        public List<byte[]>? request(string cmd, params string[] args)
         {
-            return link.request(cmd, args);
+            return link?.request(cmd, args);
         }
 
-        public List<byte[]> request(string cmd, params byte[][] args)
+        public List<byte[]>? request(string cmd, params byte[][] args)
         {
-            return link.request(cmd, args);
+            return link?.request(cmd, args);
         }
 
-        public List<byte[]> request(List<byte[]> req)
+        public List<byte[]>? request(List<byte[]> req)
         {
-            return link.request(req);
+            return link?.request(req);
         }
 
 
@@ -59,17 +59,17 @@ namespace ssdb
             return bs == null ? string.Empty : Encoding.Default.GetString(bs);
         }
 
-        private KeyValuePair<string, byte[]>[] parse_scan_resp(List<byte[]> resp)
+        private KeyValuePair<string, byte[]>[] parse_scan_resp(List<byte[]>? resp)
         {
-            resp_code = _string(resp[0]);
+            resp_code = _string(resp?.ElementAt(0));
             this.assert_ok();
 
-            int size = (resp.Count - 1) / 2;
+            int size = (resp?.Count - 1) / 2 ?? 0;
             KeyValuePair<string, byte[]>[] kvs = new KeyValuePair<string, byte[]>[size];
             for (int i = 0; i < size; i += 1)
             {
-                string key = _string(resp[i * 2 + 1]);
-                byte[] val = resp[i * 2 + 2];
+                string key = _string(resp?.ElementAt(i * 2 + 1));
+                byte[] val = resp?.ElementAt(i * 2 + 2) ?? Array.Empty<byte>();
                 kvs[i] = new KeyValuePair<string, byte[]>(key, val);
             }
             return kvs;
@@ -79,14 +79,14 @@ namespace ssdb
 
         public bool exists(byte[] key)
         {
-            List<byte[]> resp = request("exists", key);
-            resp_code = _string(resp[0]);
+            List<byte[]>? resp = request("exists", key);
+            resp_code = _string(resp?.ElementAt(0));
             if (resp_code == "not_found")
             {
                 return false;
             }
             this.assert_ok();
-            if (resp.Count != 2)
+            if (resp == null || resp?.Count != 2)
             {
                 throw new Exception("Bad response!");
             }
@@ -100,8 +100,8 @@ namespace ssdb
 
         public void set(byte[] key, byte[] val)
         {
-            List<byte[]> resp = request("set", key, val);
-            resp_code = _string(resp[0]);
+            List<byte[]>? resp = request("set", key, val);
+            resp_code = _string(resp?.ElementAt(0));
             this.assert_ok();
         }
 
@@ -119,14 +119,14 @@ namespace ssdb
         public bool get(byte[] key, out byte[]? val)
         {
             val = null;
-            List<byte[]> resp = request("get", key);
-            resp_code = _string(resp[0]);
+            List<byte[]>? resp = request("get", key);
+            resp_code = _string(resp?.ElementAt(0));
             if (resp_code == "not_found")
             {
                 return false;
             }
             this.assert_ok();
-            if (resp.Count != 2)
+            if (resp == null || resp?.Count != 2)
             {
                 throw new Exception("Bad response!");
             }
@@ -153,8 +153,8 @@ namespace ssdb
 
         public void del(byte[] key)
         {
-            List<byte[]> resp = request("del", key);
-            resp_code = _string(resp[0]);
+            List<byte[]>? resp = request("del", key);
+            resp_code = _string(resp?.ElementAt(0));
             this.assert_ok();
         }
 
@@ -165,13 +165,13 @@ namespace ssdb
 
         public KeyValuePair<string, byte[]>[] scan(string key_start, string key_end, Int64 limit)
         {
-            List<byte[]> resp = request("scan", key_start, key_end, limit.ToString());
+            List<byte[]>? resp = request("scan", key_start, key_end, limit.ToString());
             return parse_scan_resp(resp);
         }
 
         public KeyValuePair<string, byte[]>[] rscan(string key_start, string key_end, Int64 limit)
         {
-            List<byte[]> resp = request("rscan", key_start, key_end, limit.ToString());
+            List<byte[]>? resp = request("rscan", key_start, key_end, limit.ToString());
             return parse_scan_resp(resp);
         }
 
@@ -179,8 +179,8 @@ namespace ssdb
 
         public void hset(byte[] name, byte[] key, byte[] val)
         {
-            List<byte[]> resp = request("hset", name, key, val);
-            resp_code = _string(resp[0]);
+            List<byte[]>? resp = request("hset", name, key, val);
+            resp_code = _string(resp?.ElementAt(0));
             this.assert_ok();
         }
 
@@ -204,14 +204,14 @@ namespace ssdb
         public bool hget(byte[] name, byte[] key, out byte[]? val)
         {
             val = null;
-            List<byte[]> resp = request("hget", name, key);
-            resp_code = _string(resp[0]);
+            List<byte[]>? resp = request("hget", name, key);
+            resp_code = _string(resp?.ElementAt(0));
             if (resp_code == "not_found")
             {
                 return false;
             }
             this.assert_ok();
-            if (resp.Count != 2)
+            if (resp?.Count != 2)
             {
                 throw new Exception("Bad response!");
             }
@@ -238,8 +238,8 @@ namespace ssdb
 
         public void hdel(byte[] name, byte[] key)
         {
-            List<byte[]> resp = request("hdel", name, key);
-            resp_code = _string(resp[0]);
+            List<byte[]>? resp = request("hdel", name, key);
+            resp_code = _string(resp?.ElementAt(0));
             this.assert_ok();
         }
 
@@ -250,14 +250,14 @@ namespace ssdb
 
         public bool hexists(byte[] name, byte[] key)
         {
-            List<byte[]> resp = request("hexists", name, key);
-            resp_code = _string(resp[0]);
+            List<byte[]>? resp = request("hexists", name, key);
+            resp_code = _string(resp?.ElementAt(0));
             if (resp_code == "not_found")
             {
                 return false;
             }
             this.assert_ok();
-            if (resp.Count != 2)
+            if (resp?.Count != 2)
             {
                 throw new Exception("Bad response!");
             }
@@ -271,10 +271,10 @@ namespace ssdb
 
         public Int64 hsize(byte[] name)
         {
-            List<byte[]> resp = request("hsize", name);
-            resp_code = _string(resp[0]);
+            List<byte[]>? resp = request("hsize", name);
+            resp_code = _string(resp?.ElementAt(0));
             this.assert_ok();
-            if (resp.Count != 2)
+            if (resp?.Count != 2)
             {
                 throw new Exception("Bad response!");
             }
@@ -288,13 +288,13 @@ namespace ssdb
 
         public KeyValuePair<string, byte[]>[] hscan(string name, string key_start, string key_end, Int64 limit)
         {
-            List<byte[]> resp = request("hscan", name, key_start, key_end, limit.ToString());
+            List<byte[]>? resp = request("hscan", name, key_start, key_end, limit.ToString());
             return parse_scan_resp(resp);
         }
 
         public KeyValuePair<string, byte[]>[] hrscan(string name, string key_start, string key_end, Int64 limit)
         {
-            List<byte[]> resp = request("hrscan", name, key_start, key_end, limit.ToString());
+            List<byte[]>? resp = request("hrscan", name, key_start, key_end, limit.ToString());
             return parse_scan_resp(resp);
         }
 
@@ -308,8 +308,8 @@ namespace ssdb
                 req[(2 * i) + 2] = kvs[i].Value;
 
             }
-            List<byte[]> resp = request("multi_hset", req);
-            resp_code = _string(resp[0]);
+            List<byte[]>? resp = request("multi_hset", req);
+            resp_code = _string(resp?.ElementAt(0));
             this.assert_ok();
         }
 
@@ -331,8 +331,8 @@ namespace ssdb
             {
                 req[i + 1] = keys[i];
             }
-            List<byte[]> resp = request("multi_hdel", req);
-            resp_code = _string(resp[0]);
+            List<byte[]>? resp = request("multi_hdel", req);
+            resp_code = _string(resp?.ElementAt(0));
             this.assert_ok();
         }
 
@@ -354,7 +354,7 @@ namespace ssdb
             {
                 req[i + 1] = keys[i];
             }
-            List<byte[]> resp = request("multi_hget", req);
+            List<byte[]>? resp = request("multi_hget", req);
             KeyValuePair<string, byte[]>[] ret = parse_scan_resp(resp);
 
             return ret;
@@ -374,8 +374,8 @@ namespace ssdb
 
         public void zset(byte[] name, byte[] key, Int64 score)
         {
-            List<byte[]> resp = request("zset", name, key, _bytes(score.ToString()));
-            resp_code = _string(resp[0]);
+            List<byte[]>? resp = request("zset", name, key, _bytes(score.ToString()));
+            resp_code = _string(resp?.ElementAt(0));
             this.assert_ok();
         }
 
@@ -386,10 +386,10 @@ namespace ssdb
 
         public Int64 zincr(byte[] name, byte[] key, Int64 increment)
         {
-            List<byte[]> resp = request("zincr", name, key, _bytes(increment.ToString()));
-            resp_code = _string(resp[0]);
+            List<byte[]>? resp = request("zincr", name, key, _bytes(increment.ToString()));
+            resp_code = _string(resp?.ElementAt(0));
             this.assert_ok();
-            if (resp.Count != 2)
+            if (resp?.Count != 2)
             {
                 throw new Exception("Bad response!");
             }
@@ -411,14 +411,14 @@ namespace ssdb
         public bool zget(byte[] name, byte[] key, out Int64 score)
         {
             score = -1;
-            List<byte[]> resp = request("zget", name, key);
-            resp_code = _string(resp[0]);
+            List<byte[]>? resp = request("zget", name, key);
+            resp_code = _string(resp?.ElementAt(0));
             if (resp_code == "not_found")
             {
                 return false;
             }
             this.assert_ok();
-            if (resp.Count != 2)
+            if (resp?.Count != 2)
             {
                 throw new Exception("Bad response!");
             }
@@ -433,8 +433,8 @@ namespace ssdb
 
         public void zdel(byte[] name, byte[] key)
         {
-            List<byte[]> resp = request("zdel", name, key);
-            resp_code = _string(resp[0]);
+            List<byte[]>? resp = request("zdel", name, key);
+            resp_code = _string(resp?.ElementAt(0));
             this.assert_ok();
         }
 
@@ -445,10 +445,10 @@ namespace ssdb
 
         public Int64 zsize(byte[] name)
         {
-            List<byte[]> resp = request("zsize", name);
-            resp_code = _string(resp[0]);
+            List<byte[]>? resp = request("zsize", name);
+            resp_code = _string(resp?.ElementAt(0));
             this.assert_ok();
-            if (resp.Count != 2)
+            if (resp?.Count != 2)
             {
                 throw new Exception("Bad response!");
             }
@@ -462,14 +462,14 @@ namespace ssdb
 
         public bool zexists(byte[] name, byte[] key)
         {
-            List<byte[]> resp = request("zexists", name, key);
-            resp_code = _string(resp[0]);
+            List<byte[]>? resp = request("zexists", name, key);
+            resp_code = _string(resp?.ElementAt(0));
             if (resp_code == "not_found")
             {
                 return false;
             }
             this.assert_ok();
-            if (resp.Count != 2)
+            if (resp?.Count != 2)
             {
                 throw new Exception("Bad response!");
             }
@@ -483,7 +483,7 @@ namespace ssdb
 
         public KeyValuePair<string, Int64>[] zrange(string name, Int32 offset, Int32 limit)
         {
-            List<byte[]> resp = request("zrange", name, offset.ToString(), limit.ToString());
+            List<byte[]>? resp = request("zrange", name, offset.ToString(), limit.ToString());
             KeyValuePair<string, byte[]>[] kvs = parse_scan_resp(resp);
             KeyValuePair<string, Int64>[] ret = new KeyValuePair<string, Int64>[kvs.Length];
             for (int i = 0; i < kvs.Length; i++)
@@ -497,7 +497,7 @@ namespace ssdb
 
         public KeyValuePair<string, Int64>[] zrrange(string name, Int32 offset, Int32 limit)
         {
-            List<byte[]> resp = request("zrrange", name, offset.ToString(), limit.ToString());
+            List<byte[]>? resp = request("zrrange", name, offset.ToString(), limit.ToString());
             KeyValuePair<string, byte[]>[] kvs = parse_scan_resp(resp);
             KeyValuePair<string, Int64>[] ret = new KeyValuePair<string, Int64>[kvs.Length];
             for (int i = 0; i < kvs.Length; i++)
@@ -521,7 +521,7 @@ namespace ssdb
             {
                 score_e = score_end.ToString();
             }
-            List<byte[]> resp = request("zscan", name, key_start, score_s, score_e, limit.ToString());
+            List<byte[]>? resp = request("zscan", name, key_start, score_s, score_e, limit.ToString());
             KeyValuePair<string, byte[]>[] kvs = parse_scan_resp(resp);
             KeyValuePair<string, Int64>[] ret = new KeyValuePair<string, Int64>[kvs.Length];
             for (int i = 0; i < kvs.Length; i++)
@@ -545,7 +545,7 @@ namespace ssdb
             {
                 score_e = score_end.ToString();
             }
-            List<byte[]> resp = request("zrscan", name, key_start, score_s, score_e, limit.ToString());
+            List<byte[]>? resp = request("zrscan", name, key_start, score_s, score_e, limit.ToString());
             KeyValuePair<string, byte[]>[] kvs = parse_scan_resp(resp);
             KeyValuePair<string, Int64>[] ret = new KeyValuePair<string, Int64>[kvs.Length];
             for (int i = 0; i < kvs.Length; i++)
@@ -567,8 +567,8 @@ namespace ssdb
                 req[(2 * i) + 2] = _bytes(kvs[i].Value.ToString());
 
             }
-            List<byte[]> resp = request("multi_zset", req);
-            resp_code = _string(resp[0]);
+            List<byte[]>? resp = request("multi_zset", req);
+            resp_code = _string(resp?.ElementAt(0));
             this.assert_ok();
         }
 
@@ -590,8 +590,8 @@ namespace ssdb
             {
                 req[i + 1] = keys[i];
             }
-            List<byte[]> resp = request("multi_zdel", req);
-            resp_code = _string(resp[0]);
+            List<byte[]>? resp = request("multi_zdel", req);
+            resp_code = _string(resp?.ElementAt(0));
             this.assert_ok();
         }
 
@@ -613,7 +613,7 @@ namespace ssdb
             {
                 req[i + 1] = keys[i];
             }
-            List<byte[]> resp = request("multi_zget", req);
+            List<byte[]>? resp = request("multi_zget", req);
             KeyValuePair<string, byte[]>[] kvs = parse_scan_resp(resp);
             KeyValuePair<string, Int64>[] ret = new KeyValuePair<string, Int64>[kvs.Length];
             for (int i = 0; i < kvs.Length; i++)

@@ -1,7 +1,6 @@
-﻿
-using SEC.Util;
+﻿using SEC.Util;
 
-namespace SEC.ModbusRtuDriver
+namespace SEC.Driver.ModbusRtu
 {
     public static class DriverExtend
     {
@@ -11,7 +10,7 @@ namespace SEC.ModbusRtuDriver
         /// <param name="_byte">完整报文数据</param>
         /// <param name="Length">长度</param>
         /// <returns></returns>
-        public static byte[]? GetBody(this byte[]? _byte, bool isBit=false, int Length=0)
+        public static byte[]? GetBody(this byte[]? _byte, bool isBit = false, int Length = 0)
         {
             if (_byte != null
                 && _byte.Length >= 6 //最小长度
@@ -68,7 +67,7 @@ namespace SEC.ModbusRtuDriver
                 for (int j = 0; j < 8; j++)
                 {
                     if ((CRCResult & 1) == 1)
-                        CRCResult = (CRCResult >> 1) ^ 0xA001;
+                        CRCResult = CRCResult >> 1 ^ 0xA001;
                     else CRCResult >>= 1;
                 }
             }

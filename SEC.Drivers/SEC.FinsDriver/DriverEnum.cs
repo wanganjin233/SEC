@@ -1,4 +1,4 @@
-﻿namespace SEC.FinsDriver
+﻿namespace SEC.Driver.Fins
 {
     /// <summary>
     /// 寄存器地址类型

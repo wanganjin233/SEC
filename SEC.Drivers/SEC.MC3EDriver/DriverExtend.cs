@@ -1,7 +1,7 @@
 ﻿using SEC.Driver;
 using SEC.Util;
 
-namespace SEC.MC3EDriver
+namespace SEC.Driver.MC3E
 {
     public static class DriverExtend
     {

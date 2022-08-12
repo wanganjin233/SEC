@@ -1,4 +1,6 @@
-﻿using Autofac; 
+﻿using Autofac;
+using SEC.Driver;
+using SEC.Driver.MC3E;
 
 namespace SEC.Container
 {
@@ -27,12 +29,10 @@ namespace SEC.Container
             }
         }
         private static IContainer Initialise()
-        {
-
+        { 
             var builder = new ContainerBuilder();
-            //builder.RegisterType<MC3EEthernet>().As<IDriver>();
-            var container = builder.Build();
-         
+            builder.RegisterType<MC3E>().As<BaseDriver>();
+            var container = builder.Build(); 
             return container;
         }
 

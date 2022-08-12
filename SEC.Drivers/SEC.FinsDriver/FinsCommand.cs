@@ -1,4 +1,4 @@
-﻿namespace SEC.FinsDriver
+﻿namespace SEC.Driver.Fins
 {
     internal static class FinsCommand
     {

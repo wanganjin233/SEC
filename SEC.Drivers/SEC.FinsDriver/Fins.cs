@@ -1,7 +1,7 @@
 ﻿using SEC.Driver; 
 using System.Text.RegularExpressions;
 
-namespace SEC.FinsDriver
+namespace SEC.Driver.Fins
 {
     public class Fins : BaseDriver 
     { 

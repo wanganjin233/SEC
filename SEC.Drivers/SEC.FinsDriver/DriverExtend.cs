@@ -1,6 +1,6 @@
 ﻿using SEC.Util;
 
-namespace SEC.FinsDriver
+namespace SEC.Driver.Fins
 {
     public static class DriverExtend
     {

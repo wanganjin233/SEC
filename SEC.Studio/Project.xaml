@@ -1,0 +1,43 @@
+﻿<Window x:Class="SEC.Studio.Project"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SEC.Studio"
+        xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
+        mc:Ignorable="d"
+        Title="ProjectEdit" Height="600" Width="900"
+        Style="{StaticResource ResourceKey=CustomWindowChrome}"
+        Background="Black">
+    <Grid Background="Black">
+        <DockPanel>
+            <StackPanel >
+                <Grid>
+                    <TreeView ScrollViewer.VerticalScrollBarVisibility="Auto"
+                              ScrollViewer.HorizontalScrollBarVisibility="Disabled"  
+                              Height="{c:Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type Window},AncestorLevel=1},Path=Height-45}"
+                              Canvas.Top="1"
+                              Canvas.Bottom="1" 
+                              HorizontalAlignment="Left"
+                              Name="MaintreeView" 
+                              Width="150" FontSize="22" >
+                        <TreeViewItem  Header="功能" >
+                            <TreeViewItem Header="设备管理" PreviewMouseUp="OpenDevice"></TreeViewItem>
+                            <TreeViewItem Header="容器管理"></TreeViewItem>
+                        </TreeViewItem>
+                        <TreeViewItem Header="其他" >
+                            <TreeViewItem Header="关于"></TreeViewItem>
+                            <TreeViewItem Header="帮助"></TreeViewItem>
+                        </TreeViewItem> 
+                    </TreeView>
+                </Grid>
+            </StackPanel>
+            <StackPanel >
+                <DockPanel>
+                    <Frame x:Name="Panel" Source="\view\projectedit.xaml" Grid.Row="1"></Frame>
+                </DockPanel>
+            </StackPanel>
+        </DockPanel>
+
+    </Grid>
+</Window>

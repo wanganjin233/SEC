@@ -1,10 +1,10 @@
-﻿
-
-using SEC.Util;
+﻿using SEC.Util;
 using SEC.Driver;
 using System.Text;
-using SEC.ModebusTcpDriver;
+using SEC.Driver.ModebusTcp;
 using System.Net;
+using Microsoft.Data.Sqlite;
+using Dapper; 
 
 namespace SEC.Test
 {
@@ -58,9 +58,20 @@ namespace SEC.Test
         }
 
         public Form2()
-        {
+        { 
             InitializeComponent();
             InitListView(listView1, imageList1);
+            var connectionString = new SqliteConnectionStringBuilder()
+            {
+                Mode = SqliteOpenMode.ReadWriteCreate,
+                DataSource = "C:\\Users\\su\\Desktop\\waa.s3db" 
+            }.ToString(); 
+            var _connection = new SqliteConnection(connectionString);
+            _connection.Open(); 
+
+
+
+           var asd= _connection.Query("select * from Tag").ToList();
         }
         readonly HttpClient client = new HttpClient();
         public async Task<string> Post(string url, string data)
