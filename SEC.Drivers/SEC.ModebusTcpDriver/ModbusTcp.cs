@@ -140,7 +140,7 @@ namespace SEC.Driver.ModebusTcp
                     {
                         Tag firstTag = tagGroup.Tags.First();
                         Tag lastTag = tagGroup.Tags.Last();
-                        tagGroup.Length = (ushort)(lastTag.Location + lastTag.DataLength / 2 - firstTag.Location);
+                        tagGroup.Length = (ushort)(lastTag.Location + Math.Ceiling(lastTag.DataLength / 2.0) - firstTag.Location);
                         tagGroup.Command = ((ushort)firstTag.Location).BatchReadCommand(tagGroup.Length, tagGByTypeEnumtem.Key, tagGByStationNumber.Key);
                         tagGroup.StartAddress = (ushort)firstTag.Location;
                     };
