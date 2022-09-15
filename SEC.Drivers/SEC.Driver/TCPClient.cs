@@ -25,7 +25,7 @@ namespace SEC.Driver
         /// <summary>
         /// 接收缓存
         /// </summary>
-        private byte[] Buffer { get; set; }= new byte[1024];
+        private byte[] Buffer { get; set; } = new byte[1024];
         /// <summary>
         /// 连接状态
         /// </summary>
@@ -45,8 +45,30 @@ namespace SEC.Driver
         {
             ipAddress = ServerIP;
             port = serverPort;
-            _TimeOut = timeOut;  
-        } 
+            _TimeOut = timeOut;
+        }
+        /// <summary>
+        /// 初始化连接
+        /// </summary>
+        /// <param name="ConnectionString">连接字符串</param>
+        /// <param name="timeOut">超时时间</param>
+        public TCPClient(string ConnectionString, int timeOut = 1000)
+        {
+            try
+            {
+                string[] ConnectionStrings = ConnectionString.Split(":");
+                if (ConnectionStrings.Length == 2)
+                {
+                    ipAddress = ConnectionStrings[0];
+                    port = int.Parse(ConnectionStrings[1]);
+                }
+                _TimeOut = timeOut;
+            }
+            catch (Exception)
+            { 
+                throw new Exception("连接字符串错误");
+            }
+        }
         /// <summary>
         /// 连接
         /// </summary> 
@@ -134,7 +156,7 @@ namespace SEC.Driver
                 clientSocket?.Disconnect(false);
             clientSocket?.Close();
             clientSocket?.Dispose();
-            clientSocket = null; 
+            clientSocket = null;
         }
     }
 }
