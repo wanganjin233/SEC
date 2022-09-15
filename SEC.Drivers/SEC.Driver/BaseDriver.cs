@@ -1,6 +1,6 @@
 ﻿using SEC.Util;
 using System.Collections.Concurrent;
-
+using System.ComponentModel.DataAnnotations;
 
 namespace SEC.Driver
 {
@@ -221,7 +221,7 @@ namespace SEC.Driver
                            tagGroup.Tags.ForEach(p =>
                            {
                                p.UpdateValue = BodyByte?
-                               .Skip((int)((p.Location - tagGroup.StartAddress) * 2 / WordLength))
+                               .Skip((int)((p.Location - tagGroup.StartAddress) * (p.DataType == TagTypeEnum.Boole ? 1 : 2)))
                                .Take(p.DataLength)
                                .ToArray();
                            });
