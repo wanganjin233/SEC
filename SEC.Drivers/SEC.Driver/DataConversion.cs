@@ -65,7 +65,7 @@ namespace SEC.Driver
         public static OperateResult<string[]> Translator(this byte[]? datas, ushort strLength, ushort length, Encoding encoding)
         {
             try
-            { 
+            {
                 if (datas != null && length > 0)
                 {
                     string[] result = new string[length];
@@ -84,7 +84,7 @@ namespace SEC.Driver
             {
                 return new OperateResult<string[]> { IsSuccess = false, Message = $"读取数据发生异常{e.Message}" };
             }
-        } 
+        }
         /// <summary>
         /// 数据顺序
         /// </summary>
@@ -93,19 +93,13 @@ namespace SEC.Driver
         /// <returns></returns>
         public static byte[] DataSequence(this byte[] data, string sequenceType)
         {
-            if (data == null) return data;
-            switch (sequenceType.ToUpper())
+            return sequenceType.ToUpper() switch
             {
-                case "ABCD":
-                default:
-                    return data;
-                case "BADC":
-                    return data.HiloExchange();
-                case "DCBA":
-                    return data.Reverse().ToArray();
-                case "CDAB":
-                    return data.HiloExchange()?.Reverse().ToArray();
-            }
+                "BADC" => data.HiloExchange(),
+                "DCBA" => data.Reverse().ToArray(),
+                "CDAB" => data.HiloExchange()?.Reverse().ToArray(),
+                _ => data
+            } ?? data;
         }
         /// <summary>
         /// 高低位互换
@@ -121,7 +115,7 @@ namespace SEC.Driver
                 resultByt[i] = data[i + 1];
                 resultByt[i + 1] = data[i];
             }
-            return data.ToArray();
+            return resultByt.ToArray();
         }
     }
 }
