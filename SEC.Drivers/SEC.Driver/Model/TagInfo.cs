@@ -27,7 +27,7 @@
         /// </summary>
         public byte Type { get; set; }
 
-        private int dataLength;
+        private int dataLength=0;
         /// <summary>
         /// 数据长度
         /// </summary>
@@ -55,7 +55,10 @@
                 dataLength = value;
             }
         }
-
+        /// <summary>
+        /// 缩放倍数
+        /// </summary>
+        public double Magnification { get; set; } = 1;
         /// <summary>
         /// 读写权限
         /// </summary>

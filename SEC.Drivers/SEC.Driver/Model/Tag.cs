@@ -1,4 +1,5 @@
-﻿using SEC.Util;
+﻿using Newtonsoft.Json.Linq;
+using SEC.Util;
 using System.Text;
 
 namespace SEC.Driver
@@ -18,6 +19,31 @@ namespace SEC.Driver
         /// </summary>
         private object? _Value;
         /// <summary>
+        /// 缩放后的值
+        /// </summary>
+        public double? ZoomValue
+        {
+            get
+            {
+                return DataType switch
+                {
+                    TagTypeEnum.Ushort => (ushort?)_Value / Magnification,
+                    TagTypeEnum.Short => (short?)_Value / Magnification,
+                    TagTypeEnum.Uint => (uint?)_Value / Magnification,
+                    TagTypeEnum.Int => (int?)_Value / Magnification,
+                    TagTypeEnum.Ulong => (ulong?)_Value / Magnification,
+                    TagTypeEnum.Long => (long?)_Value / Magnification,
+                    TagTypeEnum.Float => (float?)_Value / Magnification,
+                    TagTypeEnum.Double => (double?)_Value / Magnification,
+                    _ => null
+                };
+            }
+            set
+            {
+                Value = value * Magnification;
+            }
+        }
+        /// <summary>
         /// 变量值
         /// </summary>
         public object? Value
@@ -32,43 +58,21 @@ namespace SEC.Driver
                 {
                     if (value != null)
                     {
-                        if (value is string strValue)
+                        byte[] bytes = DataType switch
                         {
-                            byte[] bytes = DataType switch
-                            {
-                                TagTypeEnum.Boole => BitConverter.GetBytes(Convert.ToBoolean(strValue)),
-                                TagTypeEnum.Ushort => BitConverter.GetBytes(Convert.ToUInt16(strValue)),
-                                TagTypeEnum.Short => BitConverter.GetBytes(Convert.ToInt16(strValue)),
-                                TagTypeEnum.Uint => BitConverter.GetBytes(Convert.ToUInt32(strValue)),
-                                TagTypeEnum.Int => BitConverter.GetBytes(Convert.ToInt32(strValue)),
-                                TagTypeEnum.Float => BitConverter.GetBytes(Convert.ToSingle(strValue)),
-                                TagTypeEnum.Double => BitConverter.GetBytes(Convert.ToDouble(strValue)),
-                                TagTypeEnum.Ulong => BitConverter.GetBytes(Convert.ToUInt64(strValue)),
-                                TagTypeEnum.Long => BitConverter.GetBytes(Convert.ToInt64(strValue)),
-                                TagTypeEnum.String => Encoding.GetEncoding(Coding).GetBytes(strValue.PadRight(DataLength, '\0')),
-                                _ => throw new NotImplementedException("无法找到合适的转换")
-                            };
-                            baseDriver?.Write(this, bytes.DataSequence(Sort));
-                        }
-                        else
-                        {
-                            byte[] bytes = DataType switch
-                            {
-                                TagTypeEnum.Boole => BitConverter.GetBytes((bool)value),
-                                TagTypeEnum.Ushort => BitConverter.GetBytes((ushort)value),
-                                TagTypeEnum.Short => BitConverter.GetBytes((short)value),
-                                TagTypeEnum.Uint => BitConverter.GetBytes((uint)value),
-                                TagTypeEnum.Int => BitConverter.GetBytes((int)value),
-                                TagTypeEnum.Float => BitConverter.GetBytes((float)value),
-                                TagTypeEnum.Double => BitConverter.GetBytes((double)value),
-                                TagTypeEnum.Ulong => BitConverter.GetBytes((ulong)value),
-                                TagTypeEnum.Long => BitConverter.GetBytes((long)value),
-                                TagTypeEnum.String => Encoding.GetEncoding(Coding).GetBytes((value.ToString() ?? string.Empty).PadRight(DataLength, '\0')),
-                                _ => throw new NotImplementedException("无法找到合适的转换")
-                            };
-                            baseDriver?.Write(this, bytes.DataSequence(Sort));
-                        }
-
+                            TagTypeEnum.Boole => BitConverter.GetBytes(Convert.ToBoolean(value.ToString())),
+                            TagTypeEnum.Ushort => BitConverter.GetBytes(Convert.ToUInt16(value.ToString())),
+                            TagTypeEnum.Short => BitConverter.GetBytes(Convert.ToInt16(value.ToString())),
+                            TagTypeEnum.Uint => BitConverter.GetBytes(Convert.ToUInt32(value.ToString())),
+                            TagTypeEnum.Int => BitConverter.GetBytes(Convert.ToInt32(value.ToString())),
+                            TagTypeEnum.Ulong => BitConverter.GetBytes(Convert.ToUInt64(value.ToString())),
+                            TagTypeEnum.Long => BitConverter.GetBytes(Convert.ToInt64(value.ToString())),
+                            TagTypeEnum.Float => BitConverter.GetBytes(Convert.ToSingle(value.ToString())),
+                            TagTypeEnum.Double => BitConverter.GetBytes(Convert.ToDouble(value.ToString())),
+                            TagTypeEnum.String => Encoding.GetEncoding(Coding).GetBytes((value.ToString() ?? string.Empty).PadRight(DataLength, '\0')),
+                            _ => throw new NotImplementedException("无法找到合适的转换")
+                        };
+                        baseDriver?.Write(this, bytes.DataSequence(Sort));
                     }
                 }
                 catch (Exception e)
