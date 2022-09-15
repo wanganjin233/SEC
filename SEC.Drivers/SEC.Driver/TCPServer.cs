@@ -28,7 +28,7 @@ namespace SEC.Driver
         /// <param name="port">端口</param>
         /// <param name="ip">地址</param>
         /// <param name="maxConnect">最大连接数</param>
-        public TCPServer(int port, string ip = "192.168.1.2", int maxConnect = 10, int heartbeatTime = 10000)
+        public TCPServer(int port, string ip = "127.0.0.1", int maxConnect = 10, int heartbeatTime = 10000)
         {
             HeartbeatTime = heartbeatTime;
             MaxConnect = maxConnect;
@@ -102,12 +102,22 @@ namespace SEC.Driver
         /// 接收事件
         /// </summary>
         public event ReceiveDelegate? ReceiveEvent;
-
+        /// <summary>
+        /// 头字节
+        /// </summary>
         public byte[] HeadBytes { get; set; } = new byte[1] { 2 };
-
+        /// <summary>
+        /// 尾字节
+        /// </summary>
         public byte[] EndBytes { get; set; } = new byte[1] { 3 };
-
-        public int DataLength { get; set; } = -1;
+        /// <summary>
+        /// 数据长度位置
+        /// </summary>
+        public int DataLengthLocation { get; set; } = 0;
+        /// <summary>
+        /// 数据长度类型
+        /// </summary>
+        public int DataLengthType { get; set; } = 1;
         /// <summary>
         /// 接收字节
         /// </summary>
@@ -150,16 +160,20 @@ namespace SEC.Driver
                             if (startIndex == -1)
                             {
                                 startIndex = buffer.IndexOf(HeadBytes);
-                                if (startIndex != -1 && DataLength != -1)
+                                if (startIndex != -1 && DataLengthLocation != -1)
                                 {
-                                    length = BitConverter.ToInt16(buffer, DataLength);
+                                    length = DataLengthType switch
+                                    {
+                                        1 => buffer[DataLengthLocation],
+                                        _ => BitConverter.ToUInt16(buffer, DataLengthLocation)
+                                    };
                                 }
                             }
                             //接收信息小于头或者找到头未找到尾时循环
                         } while (index < HeadBytes.Length
                                 || (startIndex > buffer.IndexOf(EndBytes)
                                 && (index - startIndex - 1 != length + HeadBytes.Length + EndBytes.Length
-                                    || DataLength == -1)));
+                                    || DataLengthLocation == -1)));
 
                         //获取有效长度bytes
                         var _buffer = buffer.Take(index).ToArray();
@@ -171,7 +185,9 @@ namespace SEC.Driver
                             //根据切分遍历触发接收事件发送bytes
                             foreach (var bufferitem in buffers)
                             {
-                                ThreadPool.QueueUserWorkItem(p => ReceiveEvent?.Invoke(listenSocket, bufferitem.Skip(DataLength == -1 ? 0 : DataLength + 2).ToArray()));
+                                ThreadPool.QueueUserWorkItem(p =>
+                                    ReceiveEvent?.Invoke(listenSocket, bufferitem.Skip(DataLengthLocation == -1 ? 0 : DataLengthLocation + DataLengthType).ToArray())
+                                );
                             }
                             //获取尾下标
                             int lastIndex = _buffer.LastIndexOf(EndBytes) + EndBytes.Length;
