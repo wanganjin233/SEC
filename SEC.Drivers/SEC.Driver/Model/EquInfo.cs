@@ -15,6 +15,10 @@
         /// </summary>
         public string? DriverType { get; set; }
         /// <summary>
+        /// 连接字符串
+        /// </summary>
+        public string? ConnectionString { get; set; }
+        /// <summary>
         /// 所有点位
         /// </summary>
         public List<Tag> Tags { get; set; } = new List<Tag>(); 
