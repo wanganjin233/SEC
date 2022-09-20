@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using SEC.Util;
+﻿using System.Collections.Concurrent;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
-namespace SEC.Driver
+namespace SEC.Util
 {
     public class TCPServer
     {
@@ -169,7 +166,7 @@ namespace SEC.Driver
                                     };
                                 }
                             }
-                            //接收信息小于头或者找到头未找到尾时循环
+                            //接收信息小于头或者未找到尾时循环
                         } while (index < HeadBytes.Length
                                 || (startIndex > buffer.IndexOf(EndBytes)
                                 && (index - startIndex - 1 != length + HeadBytes.Length + EndBytes.Length

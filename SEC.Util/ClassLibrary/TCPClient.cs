@@ -1,6 +1,6 @@
 ﻿using System.Net.Sockets;
 
-namespace SEC.Driver
+namespace SEC.Util
 {
     public class TCPClient : ICommunication
     {

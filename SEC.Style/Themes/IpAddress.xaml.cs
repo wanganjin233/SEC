@@ -207,7 +207,7 @@ namespace SEC.Style
 
         private void IPPart1_KeyDown(object sender, KeyEventArgs e)
         {
-            IPPart2.anc
+          
         }
     }
 }

@@ -26,7 +26,7 @@
         /// 类型
         /// </summary>
         public byte Type { get; set; }
-
+     
         private int dataLength=0;
         /// <summary>
         /// 数据长度
@@ -74,11 +74,7 @@
         /// <summary>
         /// 顺序
         /// </summary>
-        public string Sort { get; set; } = "ABCD";
-        /// <summary>
-        /// 扫描周期
-        /// </summary>
-        public int Cycle { get; set; } = 100;
+        public string Sort { get; set; } = "ABCD"; 
         /// <summary>
         /// 点位异常信息
         /// </summary>

@@ -6,6 +6,7 @@ using System.Net;
 using Microsoft.Data.Sqlite;
 using Dapper;
 using SEC.Util.Helper;
+using System.Windows.Forms;
 
 namespace SEC.Test
 {
@@ -58,10 +59,19 @@ namespace SEC.Test
             }
         }
 
+
+        string mesIP = string.Empty;
+
         public Form2()
         {
             InitializeComponent();
             InitListView(listView1, imageList1);
+
+            mesIP = File.ReadAllText(Application.StartupPath + "MesIP");
+
+
+
+
             // var connectionString = new SqliteConnectionStringBuilder()
             // {
             //     Mode = SqliteOpenMode.ReadWriteCreate,
@@ -73,6 +83,8 @@ namespace SEC.Test
             //
             //
             //var asd= _connection.Query("select * from Tag").ToList();
+
+            SqlBuilder sqlBuilder = new SqlBuilder(); 
         }
         private void Form2_Load(object sender, EventArgs e)
         {
@@ -87,6 +99,8 @@ namespace SEC.Test
                 {
                     modbusRtu = new ModbusTcp(new TCPClient(ConnectionString));
                     modbusRtu.AddTags(_EQUValue.Tags);
+                    this.dataGridView1.AutoGenerateColumns = false;
+                    dataGridView1.DataSource = _EQUValue.Tags;
                     Tag? TotalQTY = modbusRtu?.AllTags.Find(p => p.TagName == "TotalQTY");
                     if (TotalQTY != null)
                     {
@@ -106,13 +120,14 @@ namespace SEC.Test
 
         private void Ad_ReceiveEvent(ListenSocket client, byte[] bytes)
         {
+            
             if (bytes.Length > 2)
             {
                 try
                 {
                     string data = Encoding.ASCII.GetString(bytes);
                     Addlog(0, "     " + data);
-                    var response = HttpRequest.PostAsyncJson("http://10.164.19.18:8087/api/Packaging/GetInnerBoxInfoByNoFromEB", @$"{{ ""InnerPackageNo"":""{data}"" }}").Result;
+                    var response = HttpRequest.PostAsyncJson($"{mesIP}/api/Packaging/GetInnerBoxInfoByNoFromEB", @$"{{ ""InnerPackageNo"":""{data}"" }}").Result;
                     var Jresponse = response.ToJObject();
                     if ((bool?)Jresponse["Success"] ?? false)
                     {
@@ -153,19 +168,36 @@ namespace SEC.Test
                     Addlog(1, e.Message);
                 }
             }
+            else
+            {
+                Addlog(0, "     接收到心跳");
+            }
         }
         string InnerPackageNo = string.Empty;
         BaseDriver? modbusRtu = null;
         private void UpdateData(Tag tag)
         {
-            Tag? RealTimeWeight = modbusRtu?.AllTags.Find(p => p.TagName == "RealTimeWeight");
-            int? TotalQTY = (int?)tag.Value;
-            int? OldTotalQTY = (int?)tag.OldValue;
-            if (RealTimeWeight != null && TotalQTY != 0 && TotalQTY - OldTotalQTY == 1)
+            try
             {
-                var response = HttpRequest.PostAsyncJson("http://10.164.19.18:8087/api/Packaging/InnerWeighConfirmFromEB", @$"{{ ""InnerPackageNo"":""{InnerPackageNo}"",""ActualWeight"":""{RealTimeWeight.Value}""  }}").Result;
+                Tag? RealTimeWeight = modbusRtu?.AllTags.Find(p => p.TagName == "RealTimeWeight");
+                int? TotalQTY = (int?)tag.Value;
+                int? OldTotalQTY = (int?)tag.OldValue;
+                if (RealTimeWeight != null && TotalQTY != 0 && TotalQTY - OldTotalQTY == 1 && InnerPackageNo != string.Empty)
+                {
+                    var response = HttpRequest.PostAsyncJson($"{mesIP}/api/Packaging/InnerWeighConfirmFromEB", @$"{{ ""InnerPackageNo"":""{InnerPackageNo}"",""ActualWeight"":""{RealTimeWeight.Value}""  }}").Result;
+                    Addlog(0, tag.Description + "       " + response);
+                    InnerPackageNo = string.Empty;
+                }
             }
+            catch (Exception e)
+            {
+                Addlog(1, e.Message);
+            }
+        }
 
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            dataGridView1.Refresh();
         }
     }
 }

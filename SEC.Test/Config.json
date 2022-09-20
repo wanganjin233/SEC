@@ -1,8 +1,8 @@
 {
   "Name": "Scanner98",
   "EQU": "Scanner98",
-  "ConnectionString": "10.164.220.243:8000",
-  //"ConnectionString": "127.0.0.1:502",
+  //"ConnectionString": "10.164.220.243:8000",
+  "ConnectionString": "127.0.0.1:502",
   "DriverType": "MODBUS",
   "Tags": [
     {

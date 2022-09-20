@@ -1,7 +1,6 @@
-﻿using SEC.Util;
-using System.IO.Ports;
+﻿using System.IO.Ports;
 
-namespace SEC.Driver
+namespace SEC.Util
 {
     public class SerialPort : ICommunication
     {

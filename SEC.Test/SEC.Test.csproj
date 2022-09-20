@@ -15,7 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SEC.ContainerManage\SEC.Container.csproj" />
     <ProjectReference Include="..\SEC.Drivers\SEC.Driver\SEC.Driver.csproj" />
     <ProjectReference Include="..\SEC.Drivers\SEC.FinsDriver\SEC.Driver.Fins.csproj" />
     <ProjectReference Include="..\SEC.Drivers\SEC.MC3EDriver\SEC.Driver.MC3E.csproj" />
@@ -24,7 +23,17 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="MesIp.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MesIp.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="Config.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MesIp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

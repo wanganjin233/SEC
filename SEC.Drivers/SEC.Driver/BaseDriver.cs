@@ -208,8 +208,7 @@ namespace SEC.Driver
                 using (Communication.Write())
                 {
                     Communication.Data?.Connect();
-                }
-                AllTagDic.Values.ToList().ForEach(tag => tag.Cycle = cycle);
+                } 
                 Task.Run(async () =>
                {
                    while (IsRun)

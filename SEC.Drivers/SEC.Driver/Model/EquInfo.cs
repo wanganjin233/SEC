@@ -19,6 +19,10 @@
         /// </summary>
         public string? ConnectionString { get; set; }
         /// <summary>
+        /// 扫描周期
+        /// </summary>
+        public int ScanRate { get; set; } = 100;
+        /// <summary>
         /// 所有点位
         /// </summary>
         public List<Tag> Tags { get; set; } = new List<Tag>(); 

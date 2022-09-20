@@ -21,7 +21,7 @@ namespace SEC.Driver
         /// <summary>
         /// 缩放后的值
         /// </summary>
-        public double? ZoomValue
+        public object? ZoomValue
         {
             get
             {
@@ -40,7 +40,17 @@ namespace SEC.Driver
             }
             set
             {
-                Value = value * Magnification;
+                if (value != null)
+                {
+                    if (DataType == TagTypeEnum.String || DataType == TagTypeEnum.Boole)
+                    {
+                        Value = value; 
+                    }
+                    else
+                    {
+                        Value = BitConverter.GetBytes(Convert.ToDouble(value.ToString()) * Magnification);
+                    }
+                }
             }
         }
         /// <summary>
@@ -139,7 +149,7 @@ namespace SEC.Driver
                 {
                     return QualityTypeEnum.Bad;
                 }
-                else if (timestamp.AddMilliseconds(Cycle) > DateTime.Now)
+                else if (timestamp.AddMilliseconds(10000) > DateTime.Now)
                 {
                     return QualityTypeEnum.Good;
                 }

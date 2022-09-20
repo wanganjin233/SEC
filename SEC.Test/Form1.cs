@@ -4,6 +4,7 @@ using SEC.Driver.Fins;
 using SEC.Driver.MC3E;
 using SEC.Driver.ModbusRtu;
 using SEC.Driver.ModebusTcp;
+using SEC.Util;
 using System.Text;
 
 namespace SEC.Test

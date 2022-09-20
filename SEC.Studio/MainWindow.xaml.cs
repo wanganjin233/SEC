@@ -1,10 +1,12 @@
 ﻿using Docker.DotNet;
 using Docker.DotNet.Models;
 using Docker.DotNet.X509;
-using Microsoft.Win32;
+using Microsoft.Win32; 
 using SEC.Driver;
+using SEC.Util;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -38,43 +40,43 @@ namespace SEC.Studio
             InitializeComponent();
         }
         [MethodImpl(MethodImplOptions.NoInlining)]
-        public void Load(out WeakReference weakReference)
+        public Type  Load(out WeakReference weakReference)
         {
 
             AssemblyLoadContext? assemblyLoadContext = new AssemblyLoadContext("ModbusTcp", true);
             weakReference = new WeakReference(assemblyLoadContext);
-            Assembly assembly = assemblyLoadContext.LoadFromAssemblyPath(@"C:\Users\su\source\repos\sec\SEC.Drivers\SEC.ModebusTcpDriver\bin\Debug\net6.0\SEC.ModebusTcpDriver.dll");
-            var asd = assembly.GetType("SEC.ModebusTcpDriver.ModbusTcp");
+            Assembly assembly = assemblyLoadContext.LoadFromAssemblyPath(@"D:\SEC\SEC.Drivers\SEC.ModebusTcpDriver\bin\Debug\net6.0\SEC.Driver.ModebusTcp.dll");
+            var asd = assembly.GetType("SEC.Driver.ModebusTcp.ModbusTcp");
             TCPClient tCPClient = new TCPClient("127.0.0.1", 200);
-            BaseDriver? asda = (BaseDriver?)Activator.CreateInstance(asd, new object[] { tCPClient });
-            asda.Start();
-            asda.Dispose();
-            assemblyLoadContext.Unload();
-            assemblyLoadContext = null;
+            BaseDriver? asda = (BaseDriver?)Activator.CreateInstance(asd, new object[] { tCPClient }); 
+            assemblyLoadContext.Unload(); 
+            assemblyLoadContext = null; 
+            return asd;
         }
 
         private void OpenProject(object sender, RoutedEventArgs e)
         {
-      //      
-      //     var credentials = new CertificateCredentials(new X509Certificate2(@"C:\Users\su\source\repos\sec\SEC.Studio\Images\key.pfx", "asdfghjkl"));
-      //     credentials.ServerCertificateValidationCallback += (o, c, ch, er) => true;
-      //     var config = new DockerClientConfiguration(new Uri("http://manage.neung.top:2375"), credentials);
-      //     DockerClient client = config.CreateClient();
-      //
-      // var asd=    Task.Run(async () =>
-      //       {
-      //           await client.Containers.CreateContainerAsync(new CreateContainerParameters()
-      //           {
-      //               Image = "fedora/memcached", 
-      //               HostConfig = new HostConfig()
-      //               {
-      //                   DNS = new[] { "8.8.8.8", "8.8.4.4" } 
-      //               }
-      //           });
-      //
-      //           return await client.Images.ListImagesAsync(new ImagesListParameters() { All = true }); 
-      //       }).Result;
-             
+            
+            //      
+            //     var credentials = new CertificateCredentials(new X509Certificate2(@"C:\Users\su\source\repos\sec\SEC.Studio\Images\key.pfx", "asdfghjkl"));
+            //     credentials.ServerCertificateValidationCallback += (o, c, ch, er) => true;
+            //     var config = new DockerClientConfiguration(new Uri("http://manage.neung.top:2375"), credentials);
+            //     DockerClient client = config.CreateClient();
+            //
+            // var asd=    Task.Run(async () =>
+            //       {
+            //           await client.Containers.CreateContainerAsync(new CreateContainerParameters()
+            //           {
+            //               Image = "fedora/memcached", 
+            //               HostConfig = new HostConfig()
+            //               {
+            //                   DNS = new[] { "8.8.8.8", "8.8.4.4" } 
+            //               }
+            //           });
+            //
+            //           return await client.Images.ListImagesAsync(new ImagesListParameters() { All = true }); 
+            //       }).Result;
+
 
 
 

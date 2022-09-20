@@ -18,7 +18,30 @@ namespace SEC.Util
         /// <returns></returns>
         public static string GetLocalIp()
         {
-            UnicastIPAddressInformation? mostSuitableIp = null;
+            var networkInterfaces = NetworkInterface.GetAllNetworkInterfaces();
+
+            foreach (var network in networkInterfaces)
+            {
+                if (network.OperationalStatus != OperationalStatus.Up)
+                    continue;
+                var properties = network.GetIPProperties();
+                if (properties.GatewayAddresses.Count == 0)
+                    continue; 
+                foreach (var address in properties.UnicastAddresses)
+                {
+                    if (address.Address.AddressFamily != AddressFamily.InterNetwork)
+                        continue;
+                    if (IPAddress.IsLoopback(address.Address))
+                        continue;
+                    return address.Address.ToString();
+                }
+            } 
+            return "";
+        }
+
+        public static List<string> GetLocalIps()
+        {
+            List<string> ips = new List<string>();
             var networkInterfaces = NetworkInterface.GetAllNetworkInterfaces();
 
             foreach (var network in networkInterfaces)
@@ -35,13 +58,10 @@ namespace SEC.Util
                         continue;
                     if (IPAddress.IsLoopback(address.Address))
                         continue;
-                    return address.Address.ToString();
+                    ips.Add(address.Address.ToString());
                 }
             }
-
-            return mostSuitableIp != null
-                ? mostSuitableIp.Address.ToString()
-                : "";
+            return ips;
         }
 
         /// <summary>

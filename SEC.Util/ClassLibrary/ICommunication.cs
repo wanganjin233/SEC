@@ -1,4 +1,4 @@
-﻿namespace SEC.Driver
+﻿namespace SEC.Util
 {
     public interface ICommunication : IDisposable
     {
