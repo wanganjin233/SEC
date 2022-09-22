@@ -10,68 +10,128 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using SEC.Util;
+using SEC.Util.Helper;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace SEC.Test
 {
+
     public partial class Form3 : Form
     {
+        public class Data
+        {
+            /// <summary>
+            /// 
+            /// </summary>
+            public int StatusCode { get; set; }
+            /// <summary>
+            /// 
+            /// </summary>
+            public bool Success { get; set; }
+            /// <summary>
+            /// 治具号校验失败,设备没有提供治具号！
+            /// </summary>
+            public string Message { get; set; }
+            /// <summary>
+            /// 
+            /// </summary>
+            public string Result { get; set; }
+        }
+
+        public class Root
+        {
+            /// <summary>
+            /// 
+            /// </summary>
+            public Data Data { get; set; }
+            /// <summary>
+            /// 
+            /// </summary>
+            public string Timestamp { get; set; }
+            /// <summary>
+            /// 
+            /// </summary>
+            public string RequestId { get; set; }
+            /// <summary>
+            /// 
+            /// </summary>
+            public string Error { get; set; }
+            /// <summary>
+            /// 
+            /// </summary>
+            public bool IsSuccess { get; set; }
+        }
+        string mesIP = string.Empty;
         public Form3()
         {
-            InitializeComponent(); 
-            Socket socket = new Socket(AddressFamily.Unix, SocketType.Stream, ProtocolType.Tcp);
-            socket.Bind(new UnixDomainSocketEndPoint(Application.StartupPath + "MesIP.sock"));
-            socket.Listen(10);
-            socket.BeginAccept(AcceptCallback, socket);
-
-
-            Socket socket1 = new Socket(AddressFamily.Unix, SocketType.Stream, ProtocolType.Tcp);
-            socket1.Connect(new UnixDomainSocketEndPoint(Application.StartupPath + "MesIP.sock"));
-            socket1.Send("ss".ToBytes());
+            InitializeComponent();
+            mesIP = File.ReadAllText(Application.StartupPath + "MesIP");
         }
 
-
-        /// <summary>
-        /// 客户端连接回调
-        /// </summary>
-        /// <param name="ar"></param>
-        private void AcceptCallback(IAsyncResult ar)
+         
+        private void textBox1_KeyPress(object sender, KeyPressEventArgs e)
         {
-            Socket? _Socket = ar.AsyncState as Socket;
-            if (_Socket != null)
+            if (e.KeyChar == '\r')
             {
-                var client = _Socket.EndAccept(ar);
-                AddClient(client);
-                _Socket.BeginAccept(AcceptCallback, _Socket);
+                textBox2.Select();
+                textBox2.SelectAll();
             }
-        }
-        /// <summary>
-        /// 新增会话方法
-        /// </summary>
-        /// <param name="client"></param>
-        private void AddClient(Socket client)
-        {
-            ListenSocket listenSocket = new ListenSocket(client);
-            if (string.IsNullOrEmpty(listenSocket.RemoteEndPoint) == false)
-            {
 
-                Receive(listenSocket);
-            }
         }
-        private void Receive(ListenSocket listenSocket)
+
+        private void Form3_Activated(object sender, EventArgs e)
         {
-            _ = Task.Run(() =>
+            textBox1.Select();
+            textBox1.SelectAll();
+        }
+
+        private void textBox2_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == '\r')
             {
-                //缓存
-                byte[] buffer = new byte[listenSocket.Socket.ReceiveBufferSize];
-                //缓存下标
-                int index = 0;
-                while (true)
+                Task.Run(async () =>
                 {
-
-                    //接收阻塞
-                    int count = listenSocket.Socket.Receive(listenSocket.ReceiveBuffer);
-                }
-            });
+                    string responsestr = await HttpRequest.PostAsyncJson($"http://{mesIP}/DataService/webapi/RpcInvoke", @$"{{
+                                ""RpcPara"":{{
+                                    ""MethodName"":""GetParameterRequest"",  //接口方法名
+                                    ""Paras"":[
+                                        {{
+                                            ""Type"":""2"", 
+                                            ""Lot"":""{textBox1.Text}"", 
+                                            ""Carrier"":""{textBox2.Text}"", 
+                                            ""Equipment"":""M-ME-ET-001"", 
+                                            ""SetQty"":0,  
+                                            ""PanelQty"":0, 
+                                            ""UserCode"":""CEE_1000021""
+                                        }}
+                                    ]
+                                }}
+                            }}");
+                    Root? response = responsestr.ToObject<Root>();
+                    if (response != null)
+                    {
+                        this.Invoke(() =>
+                        {
+                            label3.Text = response.Data.Message;
+                        });
+                    }
+                });
             }
+        }
+
+        private void Form3_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                e.Cancel = true;    //取消"关闭窗口"事件
+                this.WindowState = FormWindowState.Minimized;    //使关闭时窗口向右下角缩小的效果 
+                return;
+            }
+        }
+
+        private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            this.WindowState = FormWindowState.Maximized;
+        }
     }
 }
