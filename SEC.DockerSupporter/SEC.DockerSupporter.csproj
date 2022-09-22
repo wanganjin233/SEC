@@ -17,14 +17,20 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper.Contrib" Version="2.0.78" />
-    <PackageReference Include="MySql.Data" Version="8.0.30" />
+    <PackageReference Include="Docker.DotNet" Version="3.125.12" />
+    <PackageReference Include="Docker.DotNet.X509" Version="3.125.12" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\SEC.Drivers\SEC.Driver\SEC.Driver.csproj" />
     <ProjectReference Include="..\SEC.Util\SEC.Util.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Properties\key.pfx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
