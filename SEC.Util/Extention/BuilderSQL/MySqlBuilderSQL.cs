@@ -9,7 +9,7 @@ using System.Collections;
 
 namespace SEC.Util.BuilderSQL
 { 
-    public static class BuilderSQL
+    public static class MySqlBuilderSQL
     {
         #region 查询数据 
         public static ExpressionBuilderSQL<T> Select<T>(this IDbConnection Db) where T : class, new() => new ExpressionBuilderSQL<T>(Db).Select();
@@ -296,11 +296,28 @@ namespace SEC.Util.BuilderSQL
                         {
                             for (int i = offset; i < sourcePropertyInfoList.Length + offset; i++)
                             {
+                                if (_rows.Count == i)
+                                {
+                                    break;
+                                } 
                                 var field = _rows.ElementAt(i);
                                 if (field.Key == propertyInfo.Name)
                                 {
-                                    propertyInfo.SetValue(instance, field.Value);
-                                    break;
+                                    if (propertyInfo.PropertyType.BaseType ==typeof( Enum))
+                                    {
+                                        Enum.TryParse(propertyInfo.PropertyType, field.Value.ToString(), out object? _enum);
+                                        if (_enum != null)
+                                        {
+                                            propertyInfo.SetValue(instance, _enum);
+                                        } 
+                                    }
+                                    else
+                                    {
+                                        propertyInfo.SetValue(instance, field.Value);
+                                    }
+                                     
+
+                                   
                                 }
                             }
                         }
