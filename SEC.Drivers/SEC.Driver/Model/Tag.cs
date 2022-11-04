@@ -92,9 +92,9 @@ namespace SEC.Driver
             }
         }
         /// <summary>
-        /// 供驱动更新点位方法
+        /// 更新点位值
         /// </summary>
-        protected internal byte[]? UpdateValue
+        public byte[]? UpdateValue
         {
             set
             {

@@ -1,22 +1,22 @@
 ﻿using SEC.Util;
 using System.Collections.Concurrent;
-using System.ComponentModel.DataAnnotations;
 
 namespace SEC.Driver
 {
     public abstract class BaseDriver : IDisposable
     {
-        public BaseDriver(ICommunication communication)
+        public BaseDriver(string communicationStr)
         {
-            using (Communication.Write())
-            {
-                Communication.Data = communication;
-            }
+            Communication = Tools.ConnectionResolution(communicationStr);
+            Communication.ReceiveTimeout = 5000;
+            Communication.SendTimeout = 5000;
+            Communication.Connect();
         }
+        public readonly ICommunication Communication;
         /// <summary>
-        /// 连接方式
+        /// 驱动连接状态
         /// </summary>
-        private UsingLock<ICommunication> Communication = new UsingLock<ICommunication>();
+        public virtual bool DriverState => Communication.Connected;
         /// <summary>
         /// 点位组
         /// </summary>
@@ -29,10 +29,6 @@ namespace SEC.Driver
         /// 全部点位
         /// </summary>
         public List<Tag> AllTags => AllTagDic.Values.ToList();
-        /// <summary>
-        /// 驱动连接状态
-        /// </summary>
-        public virtual bool DriverState => Communication.Data?.Connected ?? false;
         /// <summary>
         /// 一个字的数据地址长度 
         /// 西门子 2
@@ -48,66 +44,6 @@ namespace SEC.Driver
         {
             return null;
         }
-        protected virtual int GetLength(byte[] bytes, int startIndex)
-        {
-            throw new Exception("功能未实现");
-        }
-        protected byte[]? SendResponse(byte[] command, byte[] headByte)
-        {
-            using (Communication.Write())
-            {
-                if (Communication.Data?.Send(command) ?? false)
-                {
-                    Thread.Sleep(10);
-                    byte[] data = new byte[8192];
-                    int index = 0;
-                    int headIndex = -1;
-                    int len = -1;
-                    do
-                    {
-                        byte[]? bytes = Communication.Data.Receive();
-                        if (bytes != null)
-                        {
-                            bytes.CopyTo(data, index);
-                            if (headIndex == -1)
-                            {
-                                headIndex = data.IndexOf(headByte);
-                                if (headIndex > -1)
-                                {
-                                    len = GetLength(bytes, headIndex);
-                                }
-                            }
-                            index = bytes.Length;
-                        }
-                        else
-                        {
-                            return null;
-                        }
-                    } while (index < headByte.Length || (headIndex > -1 && len != index));
-                    return data.Skip(headIndex).Take(len - headIndex).ToArray();
-                }
-                else
-                {
-                    Communication.Data?.Connect();
-                }
-                return null;
-            }
-        }
-        /// <summary>
-        /// 读取
-        /// </summary>
-        /// <param name="address"></param>
-        /// <param name="length"></param>
-        /// <param name="isBit"></param>
-        /// <returns></returns>
-        public virtual byte[]? Read(string address, ushort length, bool isBit = false)
-        {
-            throw new Exception("功能未实现");
-        }
-        public virtual bool Write(Tag tag, byte[] value)
-        {
-            throw new Exception("功能未实现");
-        }
         /// <summary>
         /// 写入
         /// </summary>
@@ -115,11 +51,12 @@ namespace SEC.Driver
         /// <param name="address"></param>
         /// <param name="Value"></param>
         /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public virtual bool Write(string address, byte[] Value, bool isBit)
+        /// <exception cref="NotImplementedException"></exception> 
+        public virtual bool Write(Tag tag, byte[] value)
         {
             throw new Exception("功能未实现");
         }
+
         /// <summary>
         /// 发送命令并返回
         /// </summary>
@@ -127,35 +64,70 @@ namespace SEC.Driver
         /// <returns></returns>
         public virtual byte[]? SendCommand(byte[] command)
         {
-            throw new Exception("功能未实现");
+            if (Communication.Send(command))
+            {
+                Thread.Sleep(10);
+                return Communication.Receive();
+            }
+            return null;
         }
+        protected Func<TagGroup, byte, object, byte[]>? BatchReadCommand;
+
+        protected Func<Tag, int> GetEndPosition = (tag) => { return 0; };
         /// <summary>
-        /// 异步读取
+        /// tag分组
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="address"></param>
-        /// <param name="Value"></param>
+        /// <param name="tags"></param>
         /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public async Task<byte[]?> AsyncRead(string address, ushort length, bool isBit)
-        {
-            return await Task.Run(() => Read(address, length, isBit));
-        }
-        /// <summary>
-        /// 异步写入
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="address"></param>
-        /// <param name="Value"></param>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public async Task<bool> AsyncWrite(string address, byte[] Value, bool isBit)
-        {
-            return await Task.Run(() => Write(address, Value, isBit));
-        }
         protected virtual List<TagGroup>? Packet(List<Tag> tags)
         {
-            throw new Exception("未实现分组功能");
+            //清空分组
+            TagGroups.Clear();
+            if (!tags.Any()) { return null; }
+            foreach (var tagGByStationNumber in tags.GroupBy(p => p.StationNumber))
+            {
+                foreach (var tagGByBit in tagGByStationNumber.GroupBy(p => p.IsBit))
+                {
+                    foreach (var tagGByTypeEnumtem in tagGByBit.GroupBy(p => p.Type))
+                    {
+                        TagGroup tagGroup = new()
+                        {
+                            IsBit = tagGByBit.Key 
+                        };
+                        //排序
+                        List<Tag> tagsList = tagGByTypeEnumtem.OrderBy(p => p.Location).ToList();
+                        //生成组地址报文
+                        void CreationReadCommand(TagGroup tagGroup)
+                        {
+                            Tag firstTag = tagGroup.Tags.First();
+                            Tag lastTag = tagGroup.Tags.Last();
+                            tagGroup.Length = (ushort)(lastTag.Location + Math.Ceiling(lastTag.DataLength / 2.0) - firstTag.Location);
+                            tagGroup.Command = BatchReadCommand?.Invoke(tagGroup, tagGByStationNumber.Key, tagGByTypeEnumtem.Key);
+                            tagGroup.StartAddress = (ushort)firstTag.Location;
+                        }
+                        //获取结束位置 
+                        int endTag = GetEndPosition.Invoke(tagsList.First());
+                        foreach (var tag in tagsList)
+                        {
+                            if (tag.Location + tag.DataLength / 2 < endTag)
+                            {
+                                tagGroup.Tags.Add(tag);
+                            }
+                            else
+                            {
+                                TagGroups.Add(tagGroup);
+                                CreationReadCommand(tagGroup);
+                                tagGroup = new TagGroup();
+                                tagGroup.Tags.Add(tag);
+                                endTag = GetEndPosition.Invoke(tag);
+                            }
+                        }
+                        TagGroups.Add(tagGroup);
+                        CreationReadCommand(tagGroup);
+                    }
+                }
+            }
+            return TagGroups.ToList();
         }
         /// <summary>
         /// 释放
@@ -163,23 +135,27 @@ namespace SEC.Driver
         public void Dispose()
         {
             Stop();
-            Communication?.Dispose();
             GC.SuppressFinalize(this);
         }
-        protected virtual void AddressParsing(Tag tag)
+        /// <summary>
+        /// tag处理
+        /// </summary>
+        /// <param name="tag"></param>
+        /// <returns></returns>
+        protected virtual Tag TagParsing(Tag tag)
         {
-            throw new Exception("未实现分组功能");
+            return tag;
         }
         /// <summary>
         /// 添加节点
         /// </summary>
         /// <param name="tags"></param>
-        public void AddTags(List<Tag> tags)
+        public virtual void AddTags(List<Tag> tags)
         {
             tags.ForEach(p =>
             {
-                AddressParsing(p);
-                AllTagDic.TryAdd(p.Address, p);
+                p = TagParsing(p);
+                AllTagDic.TryAdd(p.TagName, p);
                 p.baseDriver = this;
             });
             Packet(AllTagDic.Values.ToList());
@@ -192,7 +168,7 @@ namespace SEC.Driver
         {
             tags.ForEach(p =>
             {
-                AllTagDic.Remove(p.Address, out Tag? tag);
+                AllTagDic.Remove(p.TagName, out Tag? tag);
             });
             Packet(AllTagDic.Values.ToList());
         }
@@ -200,15 +176,11 @@ namespace SEC.Driver
         /// 启动驱动
         /// </summary>
         /// <param name="cycle"></param>
-        public void Start(int cycle = 100)
+        public virtual void Start(int cycle = 100)
         {
             if (IsRun == false)
             {
                 IsRun = true;
-                using (Communication.Write())
-                {
-                    Communication.Data?.Connect();
-                } 
                 Task.Run(async () =>
                {
                    while (IsRun)
@@ -219,8 +191,24 @@ namespace SEC.Driver
                            byte[]? BodyByte = SendCommand(tagGroup.Command);
                            tagGroup.Tags.ForEach(p =>
                            {
+                               int skipIndex;
+                               if (tagGroup.IsBit)
+                               {
+                                   if (p.BitLocation != -1)
+                                   {
+                                       skipIndex = (int)(p.Location - tagGroup.StartAddress) * 16 + p.BitLocation;
+                                   }
+                                   else
+                                   {
+                                       skipIndex = (int)(p.Location - tagGroup.StartAddress) + p.BitLocation;
+                                   }
+                               }
+                               else
+                               {
+                                   skipIndex = (int)(p.Location - tagGroup.StartAddress) * 2 + p.BitLocation;
+                               } 
                                p.UpdateValue = BodyByte?
-                               .Skip((int)((p.Location - tagGroup.StartAddress) * (p.DataType == TagTypeEnum.Boole ? 1 : 2)))
+                               .Skip(skipIndex)
                                .Take(p.DataLength)
                                .ToArray();
                            });
@@ -239,6 +227,7 @@ namespace SEC.Driver
         /// </summary>
         public void Stop()
         {
+            Communication.Dispose();
             IsRun = false;
         }
     }

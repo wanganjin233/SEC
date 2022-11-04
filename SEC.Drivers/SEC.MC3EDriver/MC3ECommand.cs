@@ -21,7 +21,7 @@
         /// <param name="networkNumber"></param>
         /// <param name="networkStationNumber"></param>
         /// <returns></returns>
-        internal static byte[] BatchReadCommand(this int address, AddressTypeEnum addressType, ushort length, bool isBit, byte networkNumber = 0, byte networkStationNumber = 0)
+        internal static byte[] BatchReadCommand(this uint address, AddressTypeEnum addressType, ushort length, bool isBit, byte networkNumber, byte networkStationNumber)
         {
             var addBuffer = BitConverter.GetBytes(address);
             var readLenBuffer = BitConverter.GetBytes(length);
@@ -111,12 +111,12 @@
         /// </summary>
         /// <param name="Addresses"></param>
         /// <returns></returns>
-        internal static byte[] RandomReadCommand(this List<string> Addresses) { return new byte[0]; }
+        internal static byte[] RandomReadCommand(this List<string> Addresses) { return Array.Empty<byte>(); }
         /// <summary>
         /// 生成随机写入指令
         /// </summary>
         /// <param name="Addresses"></param>
         /// <returns></returns>
-        internal static byte[] RandomWriteCommand(this Dictionary<string, object> Addresses) { return new byte[0]; }
+        internal static byte[] RandomWriteCommand(this Dictionary<string, object> Addresses) { return Array.Empty<byte>(); }
     }
 }

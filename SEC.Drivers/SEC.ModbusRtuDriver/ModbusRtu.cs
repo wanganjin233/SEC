@@ -6,7 +6,7 @@ namespace SEC.Driver.ModbusRtu
     public class ModbusRtu : BaseDriver
     {
         public ModbusRtu(ICommunication communication)
-           : base(communication)
+           : base( "")
         {
 
         }
@@ -27,7 +27,7 @@ namespace SEC.Driver.ModbusRtu
         /// <param name="length"></param>
         /// <param name="isBit"></param>
         /// <returns></returns>
-        public override byte[]? Read(string address, ushort length, bool isBit = false)
+        public   byte[]? Read(string address, ushort length, bool isBit = false)
         {
             if (ushort.TryParse(address, out ushort _address))
             {
@@ -97,7 +97,7 @@ namespace SEC.Driver.ModbusRtu
         /// <param name="length"></param>
         /// <param name="isBit"></param>
         /// <returns></returns>
-        public override bool Write(string address, byte[] Value, bool isBit = false)
+        public   bool Write(string address, byte[] Value, bool isBit = false)
         {
             if (ushort.TryParse(address, out ushort _address))
             {

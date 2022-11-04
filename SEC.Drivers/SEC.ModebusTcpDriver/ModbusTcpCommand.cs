@@ -76,12 +76,12 @@
         /// </summary>
         /// <param name="Addresses"></param>
         /// <returns></returns>
-        internal static byte[] RandomReadCommand(this List<string> Addresses) { return new byte[0]; }
+        internal static byte[] RandomReadCommand(this List<string> Addresses) { return Array.Empty<byte>(); }
         /// <summary>
         /// 生成随机写入指令
         /// </summary>
         /// <param name="Addresses"></param>
         /// <returns></returns>
-        internal static byte[] RandomWriteCommand(this Dictionary<string, object> Addresses) { return new byte[0]; }
+        internal static byte[] RandomWriteCommand(this Dictionary<string, object> Addresses) { return Array.Empty<byte>(); }
     }
 }

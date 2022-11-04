@@ -25,9 +25,17 @@
         /// <summary>
         /// 类型
         /// </summary>
-        public byte Type { get; set; }
-     
-        private int dataLength=0;
+        public object Type { get; set; } = 0x0;
+        /// <summary>
+        /// 是否为位地址
+        /// </summary>
+        public bool IsBit { get; set; } = false;
+        /// <summary>
+        /// 位地址位置
+        /// </summary>
+        public int BitLocation { get; set; } = -1;
+
+        private int dataLength = 0;
         /// <summary>
         /// 数据长度
         /// </summary>
@@ -46,7 +54,7 @@
                     TagTypeEnum.Double => 8,
                     TagTypeEnum.Ulong => 8,
                     TagTypeEnum.Long => 8,
-                    TagTypeEnum.String => dataLength ,
+                    TagTypeEnum.String => dataLength,
                     _ => dataLength
                 };
             }
@@ -74,7 +82,7 @@
         /// <summary>
         /// 顺序
         /// </summary>
-        public string Sort { get; set; } = "ABCD"; 
+        public string Sort { get; set; } = "ABCD";
         /// <summary>
         /// 点位异常信息
         /// </summary>

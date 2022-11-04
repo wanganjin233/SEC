@@ -1,7 +1,4 @@
-﻿using SEC.Driver;
-using SEC.Util;
-
-namespace SEC.Driver.ModebusTcp
+﻿namespace SEC.Driver.ModebusTcp
 {
     internal static class DriverExtend
     {
@@ -13,9 +10,9 @@ namespace SEC.Driver.ModebusTcp
         /// <returns></returns>
         internal static byte[]? GetBody(this byte[]? _byte, bool isBit = false, int Length = 0)
         {
-            if (_byte != null && _byte.Length > 9)
+            if (_byte != null)
             {
-                _byte = _byte.Skip(9).Take(_byte.Length - 9).ToArray(); //截取内容
+                _byte = _byte.Skip(3).ToArray(); //截取内容
                 if (isBit)//读取布尔类型长度
                 {
                     byte[] result = new byte[Length];
@@ -32,6 +29,11 @@ namespace SEC.Driver.ModebusTcp
             }
             return null;
         }
+        /// <summary>
+        /// 校验写入数据
+        /// </summary>
+        /// <param name="bytes"></param>
+        /// <returns></returns>
         internal static bool Verify(this byte[]? bytes)
         {
             if (bytes != null && bytes.Length > 9)

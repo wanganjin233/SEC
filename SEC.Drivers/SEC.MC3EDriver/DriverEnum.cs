@@ -40,7 +40,7 @@
         /// <summary>
         /// 定时器当前值 
         /// </summary> 
-        TC = 0xC2,
+        TC = 0xC0,
         /// <summary>
         /// 累计定时器触点  
         /// </summary> 
@@ -72,7 +72,7 @@
         /// <summary>
         /// 定时器线圈
         /// </summary> 
-        TN = 0xC0,
+        TN = 0xC2,
         /// <summary>
         /// 累计定时器当前值
         /// </summary> 
@@ -80,19 +80,7 @@
         /// <summary>
         /// 计数器当前值
         /// </summary> 
-        CN = 0xC5,
-        /// <summary>
-        /// 变址寄存器
-        /// </summary> 
-        Z = 0xCC,
-        /// <summary>
-        /// 文件寄存器
-        /// </summary> 
-        R = 0xAF,
-        /// <summary>
-        /// 文件寄存器
-        /// </summary> 
-        ZR = 0xB0
+        CN = 0xC5 
     }
 
 }
