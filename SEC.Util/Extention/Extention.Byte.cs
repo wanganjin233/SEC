@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System;
+using System.Linq;
+using System.Text;
 
 namespace SEC.Util
 {
@@ -7,6 +9,19 @@ namespace SEC.Util
     /// </summary>
     public static partial class Extention
     {
+        /// <summary>
+        /// byte数组增加
+        /// </summary>
+        /// <param name="data1"></param>
+        /// <param name="data2"></param>
+        /// <returns></returns>
+        public static byte[] AddBytes(this byte[] data1, byte[] data2)
+        {
+            byte[] data3 = new byte[data1.Length + data2.Length];
+            data1.CopyTo(data3, 0);
+            data2.CopyTo(data3, data1.Length);
+            return data3;
+        }
         /// <summary>
         /// 查找byte位置
         /// </summary>
@@ -47,7 +62,7 @@ namespace SEC.Util
         /// <returns></returns>
         public static bool Equalsbytes(this IEnumerable<byte> bytes, IEnumerable<byte>? value, int startIndex = 0)
         {
-            if (value == null|| bytes.Count() < startIndex + value.Count()) return false;
+            if (value == null || bytes.Count() < startIndex + value.Count()) return false;
             for (int i = 0; i < value.Count(); i++)
             {
                 if (value.ElementAt(i) != bytes.ElementAt(i + startIndex))
@@ -86,7 +101,7 @@ namespace SEC.Util
             return bytesList;
         }
         /// <summary>
-        /// 切分bytes
+        /// 根据头尾字节切分bytes
         /// </summary>
         /// <param name="data"></param>
         /// <param name="_byte"></param>
@@ -99,12 +114,46 @@ namespace SEC.Util
             {
                 int startIndex = bytes.IndexOf(startBytes);
                 int endIndex = bytes.IndexOf(endBytes);
-                int length = endIndex - startIndex;
+                int length = endIndex - startIndex - startBytes.Count();
                 if (startIndex > -1 && endIndex > -1 && length > 0)
                 {
-                    byte[] data = bytes.Skip(startIndex + startBytes.Count()).Take(length - startBytes.Count()).ToArray();
+                    byte[] data = bytes.Skip(startIndex + startBytes.Count()).Take(length).ToArray();
                     bytesList.Add(data);
-                    bytes = bytes.Skip(length);
+                    bytes = bytes.Skip(startIndex + startBytes.Count() + length);
+                }
+                else
+                {
+                    break;
+                }
+            } while (true);
+            return bytesList;
+        }
+        /// <summary>
+        /// 根据头和长度切分bytes
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="_byte"></param>
+        /// <param name="startIndex"></param>
+        /// <returns></returns>
+        public static List<byte[]> Capture(this IEnumerable<byte> bytes, IEnumerable<byte> startBytes, int dataLengthLocation, int dataLengthType)
+        {
+            List<byte[]> bytesList = new List<byte[]>();
+            do
+            {
+                int startIndex = bytes.IndexOf(startBytes);
+                if (startIndex > -1)
+                {
+                    byte[] _bytes = bytes.ToArray();
+                    int length = dataLengthType switch
+                    {
+                        1 => _bytes[startIndex + dataLengthLocation],
+                        2 => BitConverter.ToUInt16(_bytes, dataLengthLocation),
+                        4 => BitConverter.ToInt32(_bytes, dataLengthLocation),
+                        _ => throw new NotImplementedException()
+                    }; 
+                    byte[] data = bytes.Skip(startIndex + dataLengthLocation + dataLengthType).Take(length).ToArray();
+                    bytesList.Add(data);
+                    bytes = bytes.Skip(startIndex + dataLengthLocation + dataLengthType + length);
                 }
                 else
                 {
@@ -243,6 +292,45 @@ namespace SEC.Util
                 num += bytes[i] * ((int)Math.Pow(256, bytes.Length - i - 1));
             }
             return num;
+        }
+        /// <summary>
+        /// 数据顺序
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="sequenceType"></param>
+        /// <returns></returns>
+        public static byte[] DataSequence(this byte[] data, string sequenceType)
+        {
+            return sequenceType.ToUpper() switch
+            {
+                "BADC" => data.HiloExchange(),
+                "DCBA" => data.Reverse().ToArray(),
+                "CDAB" => data.HiloExchange()?.Reverse().ToArray(),
+                _ => data
+            } ?? data;
+        }
+        /// <summary>
+        /// 高低位互换
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public static byte[]? HiloExchange(this byte[]? data)
+        {
+            if (data == null) return null;
+            if (data.Length > 1)
+            {
+                byte[] resultByt = new byte[data.Length - data.Length % 2];
+                for (int i = 0; i < resultByt.Length; i += 2)
+                {
+                    resultByt[i] = data[i + 1];
+                    resultByt[i + 1] = data[i];
+                }
+                return resultByt.ToArray();
+            }
+            else
+            {
+                return data;
+            }
         }
     }
 }
