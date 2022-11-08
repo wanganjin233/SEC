@@ -1,17 +1,28 @@
-﻿using SEC.Driver;
-using SEC.Util;
+﻿using SEC.Util;
 
 namespace SEC.Driver.ModbusRtu
 {
     public class ModbusRtu : BaseDriver
     {
-        public ModbusRtu(ICommunication communication)
-           : base( "")
+        public ModbusRtu(string ConnectionString)
+           : base(ConnectionString)
         {
-
+            Communication.DataLengthLocation = 2;
+            Communication.LengthReplenish = 2;
+            Communication.DataLengthType = LengthTypeEnum.Byte; 
         }
-        public int WriteMaxLenth = 123;
-        public int ReadMaxLenth = 124;
+        /// <summary>
+        /// 生成报文
+        /// </summary>
+        /// <param name="tagGroup"></param>
+        /// <param name="StationNumber"></param>
+        /// <param name="TypeEnumtem"></param>
+        /// <returns></returns>
+        protected override byte[]? BatchReadCommand(TagGroup tagGroup, byte StationNumber, object TypeEnumtem)
+        {
+            Tag firstTag = tagGroup.Tags.First();
+            return ((ushort)firstTag.Location).BatchReadCommand(tagGroup.Length, (byte)(AddressTypeEnum)TypeEnumtem, StationNumber);
+        }
         /// <summary>
         /// 站号
         /// </summary>
@@ -21,88 +32,74 @@ namespace SEC.Driver.ModbusRtu
             set;
         } = 1;
         /// <summary>
-        /// 批量读取原始数据
-        /// </summary>
-        /// <param name="address"></param>
-        /// <param name="length"></param>
-        /// <param name="isBit"></param>
-        /// <returns></returns>
-        public   byte[]? Read(string address, ushort length, bool isBit = false)
-        {
-            if (ushort.TryParse(address, out ushort _address))
-            {
-                byte[] command = _address.BatchReadCommand(length, isBit, StationNumber);
-                return SendWait(command).GetBody(isBit, length);
-            }
-            return null;
-        }
-        /// <summary>
-        /// 发送命令并返回
+        /// 发送命令
         /// </summary>
         /// <param name="command"></param>
         /// <returns></returns>
         public override byte[]? SendCommand(byte[] command)
         {
-            return SendWait(command).GetBody();
-        }
-        /// <summary>
-        /// 分组
-        /// </summary>
-        /// <param name="tags"></param> 
-        protected override List<TagGroup>? Packet(List<Tag> tags)
-        {
-            //清空分组
-            TagGroups.Clear();
-            if (!tags.Any()) { return null; }
-            //排序
-            tags = tags.OrderBy(p => p.Address.ToInt()).ToList();
-            //获取结束位置
-            Func<Tag, int> GetEndPosition = (tag) => tag.Address.ToInt() + ReadMaxLenth;
-            int endTag = GetEndPosition(tags.First());
-            //生成组地址报文
-            Action<TagGroup> CreationReadCommand = (tagGroup) =>
+            Communication.HeadBytes = command.Take(2).ToArray();
+            bool isBit = command[1] == 2 || command[1] == 1;
+            int readLenth = BitConverter.ToUInt16(command.Reverse().ToArray(), 2);
+            byte[] headBytes = new byte[3];
+            Communication.HeadBytes.CopyTo(headBytes, 0);
+            headBytes[2] = isBit ? (byte)(command[2] / 8 + 1) : (byte)(readLenth*2);
+            var bytes = base.SendCommand(command);
+            if (bytes != null)
             {
-                Tag firstTag = tagGroup.Tags.First();
-                Tag lastTag = tagGroup.Tags.Last();
-                ushort length = (ushort)(lastTag.Address.ToUshort() + lastTag.DataLength - firstTag.Address.ToUshort());
-                tagGroup.Command = firstTag.Address.ToUshort().BatchReadCommand(length, false, StationNumber);
-                tagGroup.StartAddress = firstTag.Address.ToUshort();
-            };
-
-            TagGroup tagGroup = new TagGroup();
-            foreach (var tag in tags)
-            {
-                if (tag.Address.ToInt() + tag.DataLength < endTag)
-                {
-                    tagGroup.Tags.Add(tag);
-                }
-                else
-                {
-                    TagGroups.Add(tagGroup);
-                    CreationReadCommand(tagGroup);
-
-                    tagGroup = new TagGroup();
-                    tagGroup.Tags.Add(tag);
-                    endTag = GetEndPosition(tag);
-                }
+                return headBytes.AddBytes(bytes).GetBody(isBit, readLenth);
             }
-            TagGroups.Add(tagGroup);
-            CreationReadCommand(tagGroup);
-            return TagGroups.ToList();
+            return null;
+        }
+        protected override Tag TagParsing(Tag tag)
+        {
+            switch (tag.Address[0])
+            {
+                case '0':
+                    tag.Type = AddressTypeEnum.zero;
+                    tag.IsBit = true;
+                    break;
+                case '1':
+                    tag.Type = AddressTypeEnum.one;
+                    tag.ClientAccess = "R";
+                    tag.IsBit = true;
+                    break;
+                case '3':
+                    tag.Type = AddressTypeEnum.threea;
+                    tag.ClientAccess = "R";
+                    break;
+                case '4':
+                    tag.Type = AddressTypeEnum.four;
+                    break;
+                default:
+                    throw new Exception("地址错误");
+            }
+            if (tag.Address.Contains('.'))
+            {
+                tag.DataType = TagTypeEnum.Boole;
+                var addressSplit = tag.Address.Split('.');
+                addressSplit[1].ToInt();
+                tag.Location = addressSplit[0][1..].ToUshort();
+            }
+            else
+            {
+                tag.Location = tag.Address[1..].ToUshort();
+            }
+            return tag;
         }
         /// <summary>
-        /// 批量写入原始数据
+        ///  写入数据
         /// </summary>
         /// <param name="address"></param>
         /// <param name="length"></param>
         /// <param name="isBit"></param>
-        /// <returns></returns>
-        public   bool Write(string address, byte[] Value, bool isBit = false)
+        /// <returns></returns> 
+        public override bool Write(Tag tag, byte[] value)
         {
-            if (ushort.TryParse(address, out ushort _address))
+            if (tag.ClientAccess.Contains('W'))
             {
-                byte[] command = _address.BatchWriteCommand(Value, isBit, StationNumber);
-                return SendWait(command).WriteVerify(command);
+                byte[] command = ((ushort)tag.Location).BatchWriteCommand(value, tag.IsBit, tag.StationNumber);
+                return SendCommand(command) != null;
             }
             return false;
         }

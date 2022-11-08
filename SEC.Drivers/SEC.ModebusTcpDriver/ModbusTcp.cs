@@ -8,21 +8,11 @@ namespace SEC.Driver.ModebusTcp
            : base(communicationStr)
         {
             Communication.DataLengthLocation = 4;
-            Communication.DataLengthType = LengthTypeEnum.ReUShort;
-            BatchReadCommand = (tagGroup, StationNumber, TypeEnumtem) =>
-            {
-                Tag firstTag = tagGroup.Tags.First();
-                return ((ushort)firstTag.Location).BatchReadCommand(tagGroup.Length, (byte)(AddressTypeEnum)TypeEnumtem, StationNumber);
-            };
-            GetEndPosition = (tag) => (int)(tag.Location + ReadMaxLenth);
+            Communication.DataLengthType = LengthTypeEnum.ReUShort; 
         }
 
         #endregion
-        #region 属性  
-        /// <summary>
-        /// 最大读取长度
-        /// </summary> 
-        public int ReadMaxLenth = 120;
+        #region 属性   
         /// <summary>
         /// 消息标识
         /// </summary>
@@ -43,7 +33,19 @@ namespace SEC.Driver.ModebusTcp
             return headByte;
         }
         #endregion
-        #region 重写方法 
+        #region 重写方法
+        /// <summary>
+        /// 生成报文
+        /// </summary>
+        /// <param name="tagGroup"></param>
+        /// <param name="StationNumber"></param>
+        /// <param name="TypeEnumtem"></param>
+        /// <returns></returns>
+        protected override byte[]? BatchReadCommand(TagGroup tagGroup, byte StationNumber, object TypeEnumtem)
+        {
+            Tag firstTag = tagGroup.Tags.First();
+            return ((ushort)firstTag.Location).BatchReadCommand(tagGroup.Length, (byte)(AddressTypeEnum)TypeEnumtem, StationNumber);
+        }
         /// <summary>
         /// tag点位地址解析
         /// </summary>

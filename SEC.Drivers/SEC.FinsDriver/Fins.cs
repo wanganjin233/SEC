@@ -30,17 +30,23 @@ namespace SEC.Driver.Fins
             Communication.HeadBytes = new byte[4] { 0x46, 0x49, 0x4E, 0x53 };
             Communication.DataLengthLocation = 4;
             Communication.DataLengthType = LengthTypeEnum.Uint;
-            BatchReadCommand = (tagGroup, StationNumber, TypeEnumtem) =>
-            { 
-                Tag firstTag = tagGroup.Tags.First();
-                Tag lastTag = tagGroup.Tags.Last();
-                if (tagGroup.IsBit)
-                {
-                    tagGroup.Length = (ushort)((lastTag.Location - firstTag.Location) * 16 + lastTag.BitLocation - firstTag.BitLocation + 1);
-                }
-                return ((ushort)firstTag.Location).BatchReadCommand((AddressTypeEnum)TypeEnumtem, tagGroup.Length, firstTag.IsBit, StationNumber, PLCNode, PCNode, (byte)firstTag.BitLocation);
-            };
-            GetEndPosition = (tag) => (int)(tag.Location + ReadMaxLenth);
+        }
+        /// <summary>
+        /// 生成报文
+        /// </summary>
+        /// <param name="tagGroup"></param>
+        /// <param name="StationNumber"></param>
+        /// <param name="TypeEnumtem"></param>
+        /// <returns></returns>
+        protected override byte[]? BatchReadCommand(TagGroup tagGroup, byte StationNumber, object TypeEnumtem)
+        { 
+            Tag firstTag = tagGroup.Tags.First();
+            Tag lastTag = tagGroup.Tags.Last();
+            if (tagGroup.IsBit)
+            {
+                tagGroup.Length = (ushort)((lastTag.Location - firstTag.Location) * 16 + lastTag.BitLocation - firstTag.BitLocation + 1);
+            }
+            return ((ushort)firstTag.Location).BatchReadCommand((AddressTypeEnum)TypeEnumtem, tagGroup.Length, firstTag.IsBit, StationNumber, PLCNode, PCNode, (byte)firstTag.BitLocation);
         }
         public override void Start(int cycle = 100)
         {
@@ -78,7 +84,7 @@ namespace SEC.Driver.Fins
         /// <summary>
         /// 读取最大长度
         /// </summary>
-        public int ReadMaxLenth = 960;
+        public override int ReadMaxLenth => 960;
         /// <summary>
         /// tag点位地址解析
         /// </summary>
@@ -105,7 +111,7 @@ namespace SEC.Driver.Fins
                 tag.Location = (uint)addressArr[0].Remove(0, addressType.Length).ToInt();
             }
             return tag;
-        } 
+        }
         /// <summary>
         /// 发送并接收
         /// </summary>
@@ -127,6 +133,22 @@ namespace SEC.Driver.Fins
                 }
             }
             return bytes;
+        }
+        /// <summary>
+        ///  写入数据
+        /// </summary>
+        /// <param name="address"></param>
+        /// <param name="length"></param>
+        /// <param name="isBit"></param>
+        /// <returns></returns> 
+        public override bool Write(Tag tag, byte[] value)
+        {
+            if (tag.ClientAccess.Contains('W'))
+            {
+                byte[] command = ((ushort)tag.Location).BatchWriteCommand((AddressTypeEnum)tag.Type, value, tag.IsBit, PLCNode, PCNode,tag.StationNumber, (byte)tag.BitLocation);
+                return SendCommand(command) != null;
+            }
+            return false;
         }
     }
 }

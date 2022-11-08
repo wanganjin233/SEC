@@ -12,126 +12,65 @@ using System.Windows.Forms;
 using SEC.Util;
 using SEC.Util.Helper;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using SEC.Driver;
 
 namespace SEC.Test
 {
 
     public partial class Form3 : Form
     {
-        public class Data
-        {
-            /// <summary>
-            /// 
-            /// </summary>
-            public int StatusCode { get; set; }
-            /// <summary>
-            /// 
-            /// </summary>
-            public bool Success { get; set; }
-            /// <summary>
-            /// 治具号校验失败,设备没有提供治具号！
-            /// </summary>
-            public string Message { get; set; }
-            /// <summary>
-            /// 
-            /// </summary>
-            public string Result { get; set; }
-        }
 
-        public class Root
-        {
-            /// <summary>
-            /// 
-            /// </summary>
-            public Data Data { get; set; }
-            /// <summary>
-            /// 
-            /// </summary>
-            public string Timestamp { get; set; }
-            /// <summary>
-            /// 
-            /// </summary>
-            public string RequestId { get; set; }
-            /// <summary>
-            /// 
-            /// </summary>
-            public string Error { get; set; }
-            /// <summary>
-            /// 
-            /// </summary>
-            public bool IsSuccess { get; set; }
-        }
-        string mesIP = string.Empty;
         public Form3()
         {
             InitializeComponent();
-            mesIP = File.ReadAllText(Application.StartupPath + "MesIP");
+            socketServer.ReceiveEvent += SocketServer_ReceiveEvent;
         }
 
-         
-        private void textBox1_KeyPress(object sender, KeyPressEventArgs e)
+        SocketServer socketServer = new SocketServer(2000)
         {
-            if (e.KeyChar == '\r')
+            HeadBytes = new byte[2] { 2, 3 },
+            EndBytes = new byte[2] { 3, 2 }
+        };
+
+        private void SocketServer_ReceiveEvent(Socket socket, byte[] bytes)
+        {
+            this.Invoke(() =>
             {
-                textBox2.Select();
-                textBox2.SelectAll();
-            }
-
+                textBox2.Text = bytes.ToASCIIString();
+            });
         }
 
-        private void Form3_Activated(object sender, EventArgs e)
+
+
+        private void button1_Click(object sender, EventArgs e)
         {
-            textBox1.Select();
-            textBox1.SelectAll();
+            socketServer.Send(new byte[2] { 2, 3 }.AddBytes(textBox1.Text.ToBytes()).AddBytes(new byte[2] { 3, 2 }));
         }
 
-        private void textBox2_KeyPress(object sender, KeyPressEventArgs e)
+        private void button2_Click(object sender, EventArgs e)
         {
-            if (e.KeyChar == '\r')
+            socketClient.Send(new byte[2] { 2, 3 }.AddBytes(textBox3.Text.ToBytes()).AddBytes(new byte[2] { 3, 2 }));
+        }
+        SocketClient socketClient;
+        private void button3_Click(object sender, EventArgs e)
+        {
+            socketClient = new SocketClient("127.0.0.1:2000")
             {
-                Task.Run(async () =>
-                {
-                    string responsestr = await HttpRequest.PostAsyncJson($"http://{mesIP}/DataService/webapi/RpcInvoke", @$"{{
-                                ""RpcPara"":{{
-                                    ""MethodName"":""GetParameterRequest"",  //接口方法名
-                                    ""Paras"":[
-                                        {{
-                                            ""Type"":""2"", 
-                                            ""Lot"":""{textBox1.Text}"", 
-                                            ""Carrier"":""{textBox2.Text}"", 
-                                            ""Equipment"":""M-ME-ET-001"", 
-                                            ""SetQty"":0,  
-                                            ""PanelQty"":0, 
-                                            ""UserCode"":""CEE_1000021""
-                                        }}
-                                    ]
-                                }}
-                            }}");
-                    Root? response = responsestr.ToObject<Root>();
-                    if (response != null)
-                    {
-                        this.Invoke(() =>
-                        {
-                            label3.Text = response.Data.Message;
-                        });
-                    }
-                });
-            }
+                LogBytes = new byte[4] { 3, 2, 3, 2 },
+                HeadBytes = new byte[2] { 2, 3 },
+                EndBytes = new byte[2] { 3, 2 },
+            };
+            socketClient.ReceiveEvent += SocketClient_ReceiveEvent;
         }
 
-        private void Form3_FormClosing(object sender, FormClosingEventArgs e)
+        private void SocketClient_ReceiveEvent(Socket socket, byte[] bytes)
         {
-            if (e.CloseReason == CloseReason.UserClosing)
+            this.Invoke(() =>
             {
-                e.Cancel = true;    //取消"关闭窗口"事件
-                this.WindowState = FormWindowState.Minimized;    //使关闭时窗口向右下角缩小的效果 
-                return;
-            }
-        }
+                textBox4.Text = bytes.ToASCIIString();
+            });
 
-        private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
-        {
-            this.WindowState = FormWindowState.Maximized;
+
         }
     }
 }

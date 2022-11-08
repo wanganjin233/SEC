@@ -37,7 +37,7 @@
         /// <param name="networkNumber"></param>
         /// <param name="networkStationNumber"></param>
         /// <returns></returns>
-        internal static byte[] BatchReadCommand(this ushort address, AddressTypeEnum addressType, ushort length, bool isBit,byte StationNumber, byte? PLCNode = null, byte? PCNode = null, byte bitAddress = 0)
+        internal static byte[] BatchReadCommand(this ushort address, AddressTypeEnum addressType, ushort length, bool isBit, byte StationNumber = 0, byte? PLCNode = null, byte? PCNode = null, byte bitAddress = 0)
         {
 
             byte[] commandBytes = new byte[34];
@@ -106,7 +106,7 @@
         /// <param name="networkNumber"></param>
         /// <param name="networkStationNumber"></param>
         /// <returns></returns>
-        internal static byte[] BatchWriteCommand(this ushort address, AddressTypeEnum addressType, byte[] value, bool isBit, byte? PLCNode = null, byte? PCNode = null, byte bitAddress = 0)
+        internal static byte[] BatchWriteCommand(this ushort address, AddressTypeEnum addressType, byte[] value, bool isBit, byte? PLCNode = null, byte? PCNode = null, byte StationNumber = 0, byte bitAddress = 0)
         {
             byte[] commandBytes = new byte[34 + value.Length];
             commandBytes[0] = 0x46;
@@ -135,7 +135,7 @@
             commandBytes[16] = 0x80;//ICF
             commandBytes[17] = 0x00;//RSV
             commandBytes[18] = 0x02;//GCT
-            commandBytes[19] = 0x00;//PLC网络地址
+            commandBytes[19] = StationNumber;//PLC网络地址
 
             commandBytes[20] = PLCNode ?? 0;//PLC节点地址
 

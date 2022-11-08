@@ -14,13 +14,13 @@
         /// <param name="networkNumber"></param>
         /// <param name="networkStationNumber"></param>
         /// <returns></returns>
-        internal static byte[] BatchReadCommand(this ushort address, ushort length, bool isBit, byte stationNumber)
+        internal static byte[] BatchReadCommand(this ushort address, ushort length, byte addressType, byte stationNumber)
         {
             var addBuffer = BitConverter.GetBytes(address);
             var readLenBuffer = BitConverter.GetBytes(length);
             byte[] commandBytes = new byte[8];
             commandBytes[0] = stationNumber;
-            commandBytes[1] = (byte)(isBit ? 0x01 : 0x03);
+            commandBytes[1] = addressType;
             commandBytes[2] = addBuffer[1];
             commandBytes[3] = addBuffer[0];
             commandBytes[4] = readLenBuffer[1];

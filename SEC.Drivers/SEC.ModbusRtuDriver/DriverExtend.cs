@@ -14,8 +14,7 @@ namespace SEC.Driver.ModbusRtu
         {
             if (_byte != null
                 && _byte.Length >= 6 //最小长度
-                && _byte.CRC16Verify() //校验CRC16
-                && _byte.Length - 5 == _byte[2] //校验内容长度
+                && _byte.CRC16Verify() //校验CRC16 
                 )
             {
                 _byte = _byte.Skip(3).Take(_byte.Length - 5).ToArray(); //截取内容
@@ -63,7 +62,7 @@ namespace SEC.Driver.ModbusRtu
             int CRCResult = 0xFFFF;
             for (int i = 0; i < dataBuff.Length - 2; i++)
             {
-                CRCResult = CRCResult ^ dataBuff[i];
+                CRCResult ^= dataBuff[i];
                 for (int j = 0; j < 8; j++)
                 {
                     if ((CRCResult & 1) == 1)
@@ -71,8 +70,8 @@ namespace SEC.Driver.ModbusRtu
                     else CRCResult >>= 1;
                 }
             }
-            return dataBuff[dataBuff.Length - 1] == Convert.ToByte(CRCResult >> 8)
-                 && dataBuff[dataBuff.Length - 2] == Convert.ToByte(CRCResult & 0xff);
+            return dataBuff[^1] == Convert.ToByte(CRCResult >> 8)
+                 && dataBuff[^2] == Convert.ToByte(CRCResult & 0xff);
         }
     }
 }

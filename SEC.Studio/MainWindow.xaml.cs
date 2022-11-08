@@ -37,7 +37,7 @@ namespace SEC.Studio
     {
         public MainWindow()
         {
-            InitializeComponent();
+         //   InitializeComponent();
         }
         [MethodImpl(MethodImplOptions.NoInlining)]
         public Type  Load(out WeakReference weakReference)
@@ -47,7 +47,7 @@ namespace SEC.Studio
             weakReference = new WeakReference(assemblyLoadContext);
             Assembly assembly = assemblyLoadContext.LoadFromAssemblyPath(@"D:\SEC\SEC.Drivers\SEC.ModebusTcpDriver\bin\Debug\net6.0\SEC.Driver.ModebusTcp.dll");
             var asd = assembly.GetType("SEC.Driver.ModebusTcp.ModbusTcp");
-            TCPClient tCPClient = new TCPClient("127.0.0.1", 200);
+            SocketClient tCPClient = new SocketClient("127.0.0.1:200");
             BaseDriver? asda = (BaseDriver?)Activator.CreateInstance(asd, new object[] { tCPClient }); 
             assemblyLoadContext.Unload(); 
             assemblyLoadContext = null; 

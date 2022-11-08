@@ -68,7 +68,7 @@
         /// <param name="networkNumber"></param>
         /// <param name="networkStationNumber"></param>
         /// <returns></returns>
-        internal static byte[] BatchWriteCommand(this int address, AddressTypeEnum addressType, byte[] value, bool isBit, byte networkNumber = 0, byte networkStationNumber = 0)
+        internal static byte[] BatchWriteCommand(this uint address, AddressTypeEnum addressType, byte[] value, bool isBit, byte networkNumber = 0, byte networkStationNumber = 0)
         {
 
             var addBuffer = BitConverter.GetBytes(address);

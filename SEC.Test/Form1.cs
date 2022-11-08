@@ -3,8 +3,7 @@ using SEC.Driver;
 using SEC.Driver.Fins;
 using SEC.Driver.MC3E;
 using SEC.Driver.ModbusRtu;
-using SEC.Driver.ModebusTcp;
-using SEC.Util;
+using SEC.Driver.ModebusTcp; 
 using System.Text;
 
 namespace SEC.Test
@@ -25,24 +24,24 @@ namespace SEC.Test
                 {
                     if (!mC3Drivers.ContainsKey(DriveChoose.SelectedIndex))
                     {
-                        switch (DriveChoose.SelectedIndex)
-                        {
-                            case 1:
-                                mC3EEthernet = new MC3E(new TCPClient(IPAddress.Text, _Port));
-                                break;
-                            case 0:
-                                mC3EEthernet = new Fins(new TCPClient(IPAddress.Text, _Port));
-                                break;
-                            case 2:
-                                mC3EEthernet = new ModbusRtu(new SerialPort("COM3", 9600, 8, "None", "1"));
-                                break;
-                            case 3:
-                                mC3EEthernet = new ModbusRtu(new TCPClient(IPAddress.Text, _Port));
-                                break;
-                            case 4:
-                                mC3EEthernet = new ModbusTcp(new TCPClient(IPAddress.Text, _Port));
-                                break;
-                        }
+                      //switch (DriveChoose.SelectedIndex)
+                      //{
+                      //    case 1:
+                      //        mC3EEthernet = new MC3E(new TCPClient(IPAddress.Text, _Port));
+                      //        break;
+                      //    case 0:
+                      //        mC3EEthernet = new Fins(new TCPClient(IPAddress.Text, _Port));
+                      //        break;
+                      //    case 2:
+                      //        mC3EEthernet = new ModbusRtu(new SerialPort("COM3", 9600, 8, "None", "1"));
+                      //        break;
+                      //    case 3:
+                      //        mC3EEthernet = new ModbusRtu(new TCPClient(IPAddress.Text, _Port));
+                      //        break;
+                      //    case 4:
+                      //        mC3EEthernet = new ModbusTcp(new TCPClient(IPAddress.Text, _Port));
+                      //        break;
+                      //}
                         if (mC3EEthernet != null)
                         {
                             mC3Drivers.Add(DriveChoose.SelectedIndex, mC3EEthernet);
@@ -66,7 +65,7 @@ namespace SEC.Test
         {
             if (ushort.TryParse(Length.Text, out ushort length))
             {
-                Read(mC3EEthernet?.ReadBoole(Address.Text, length));
+               // Read(mC3EEthernet?.ReadBoole(Address.Text, length));
             }
 
         }
@@ -96,7 +95,7 @@ namespace SEC.Test
         {
             if (ushort.TryParse(Length.Text, out ushort length))
             {
-                Read(mC3EEthernet?.ReadShort(Address.Text, length));
+               // Read(mC3EEthernet?.ReadShort(Address.Text, length));
             }
         }
 
@@ -104,7 +103,7 @@ namespace SEC.Test
         {
             if (ushort.TryParse(Length.Text, out ushort length))
             {
-                Read(mC3EEthernet?.ReadUshort(Address.Text, length));
+                //Read(mC3EEthernet?.ReadUshort(Address.Text, length));
             }
         }
 
@@ -112,7 +111,7 @@ namespace SEC.Test
         {
             if (ushort.TryParse(Length.Text, out ushort length))
             {
-                Read(mC3EEthernet?.ReadInt(Address.Text, length));
+               // Read(mC3EEthernet?.ReadInt(Address.Text, length));
             }
         }
 
@@ -120,7 +119,7 @@ namespace SEC.Test
         {
             if (ushort.TryParse(Length.Text, out ushort length))
             {
-                Read(mC3EEthernet?.ReadUint(Address.Text, length));
+               // Read(mC3EEthernet?.ReadUint(Address.Text, length));
             }
         }
 
@@ -128,7 +127,7 @@ namespace SEC.Test
         {
             if (ushort.TryParse(Length.Text, out ushort length))
             {
-                Read(mC3EEthernet?.ReadFloat(Address.Text, length));
+               // Read(mC3EEthernet?.ReadFloat(Address.Text, length));
             }
 
         }
@@ -137,7 +136,7 @@ namespace SEC.Test
         {
             if (ushort.TryParse(Length.Text, out ushort length))
             {
-                Read(mC3EEthernet?.ReadDouble(Address.Text, length));
+               // Read(mC3EEthernet?.ReadDouble(Address.Text, length));
             }
         }
 
@@ -155,7 +154,7 @@ namespace SEC.Test
         {
             if (ushort.TryParse(Length.Text, out ushort length))
             {
-                Read(mC3EEthernet?.ReadLong(Address.Text, length));
+                 
             }
         }
 
@@ -163,7 +162,7 @@ namespace SEC.Test
         {
             if (ushort.TryParse(Length.Text, out ushort length))
             {
-                Read(mC3EEthernet?.ReadUlong(Address.Text, length));
+             
             }
         }
 
@@ -171,21 +170,21 @@ namespace SEC.Test
         {
             if (ushort.TryParse(Length.Text, out ushort length) && ushort.TryParse(StringLength.Text, out ushort strlength))
             {
-                Read(mC3EEthernet?.ReadString(Address.Text, strlength, Encoding.ASCII, length));
+                
             }
         }
 
         private void w(object obj)
         {
             DateTime beforDT = System.DateTime.Now;
-            var Result = mC3EEthernet?.WriteObject(Waddress.Text, obj);
-            if (Result != null && !Result.IsSuccess)
-            {
-                MessageBox.Show(Result.Message);
-            }
-            DateTime afterDT = System.DateTime.Now;
-            TimeSpan ts = afterDT.Subtract(beforDT);
-            Ping.Text = $"{ts.TotalMilliseconds}ms";
+          // var Result = mC3EEthernet?.WriteObject(Waddress.Text, obj);
+          // if (Result != null && !Result.IsSuccess)
+          // {
+          //     MessageBox.Show(Result.Message);
+          // }
+          // DateTime afterDT = System.DateTime.Now;
+          // TimeSpan ts = afterDT.Subtract(beforDT);
+          // Ping.Text = $"{ts.TotalMilliseconds}ms";
         }
         private void shortW_Click(object sender, EventArgs e)
         {
@@ -252,11 +251,11 @@ namespace SEC.Test
 
         private void stringW_Click(object sender, EventArgs e)
         {
-            var Result = mC3EEthernet?.WriteObject(Waddress.Text, WValue.Text, Encoding.ASCII);
-            if (Result != null && !Result.IsSuccess)
-            {
-                MessageBox.Show(Result.Message);
-            }
+          // var Result = mC3EEthernet?.WriteObject(Waddress.Text, WValue.Text, Encoding.ASCII);
+          // if (Result != null && !Result.IsSuccess)
+          // {
+          //     MessageBox.Show(Result.Message);
+          // }
 
         }
 
@@ -283,7 +282,7 @@ namespace SEC.Test
             {
                 while (true)
                 {
-                    mC3EEthernet?.ReadShort("D4700", 100);
+                   // mC3EEthernet?.ReadShort("D4700", 100);
                 }
             });
         }

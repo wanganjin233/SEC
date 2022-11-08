@@ -7,6 +7,11 @@ using Microsoft.Data.Sqlite;
 using Dapper;
 using SEC.Util.Helper;
 using System.Windows.Forms;
+using static SEC.Test.Form3;
+using System.Net.Sockets;
+using SEC.Driver.MC3E;
+using SEC.Driver.Fins;
+using SEC.Driver.ModbusRtu;
 
 namespace SEC.Test
 {
@@ -87,17 +92,23 @@ namespace SEC.Test
             SqlBuilder sqlBuilder = new SqlBuilder(); 
         }
         private void Form2_Load(object sender, EventArgs e)
-        {
+        { 
+             
+            byte[] bytes = new byte[10] { 0x02, 0x03, 0x11, 0x11, 0x03, 0x02, 0x03, 0x12, 0x12, 0x03 };
+
+           var ad= bytes.Capture(new byte[1] { 0x02}, 1,1);
+
             //创建扫码枪服务
-            new TCPServer(30000).ReceiveEvent += Ad_ReceiveEvent;
+           // new SocketServer(30000).ReceiveEvent += Ad_ReceiveEvent;
+            //return;
             //读取配置文件
-            var config = File.ReadAllText(Application.StartupPath + "Config.json");
+            var config = File.ReadAllText(Application.StartupPath + "MC3E.json");
             if (config.TryToObject(out EquInfo? _EQUValue))
             {
                 string? ConnectionString = _EQUValue?.ConnectionString;
                 if (ConnectionString != null)
                 {
-                    modbusRtu = new ModbusTcp(new TCPClient(ConnectionString));
+                    modbusRtu = new MC3E(ConnectionString);
                     modbusRtu.AddTags(_EQUValue.Tags);
                     this.dataGridView1.AutoGenerateColumns = false;
                     dataGridView1.DataSource = _EQUValue.Tags;
@@ -118,11 +129,12 @@ namespace SEC.Test
             }
         }
 
-        private void Ad_ReceiveEvent(ListenSocket client, byte[] bytes)
+        private void Ad_ReceiveEvent(Socket client, byte[] bytes)
         {
-            
+            Addlog(0, "     " + bytes.To0XString());
+            return;
             if (bytes.Length > 2)
-            {
+            { 
                 try
                 {
                     string data = Encoding.ASCII.GetString(bytes);

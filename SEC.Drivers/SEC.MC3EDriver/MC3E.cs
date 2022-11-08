@@ -11,13 +11,18 @@ namespace SEC.Driver.MC3E
             Communication.HeadBytes = new byte[7] { 0xD0, 0x0, 0x0, 0xFF, 0xFF, 0x03, 0x0 };
             Communication.DataLengthLocation = 7;
             Communication.DataLengthType = LengthTypeEnum.UShort;
-            BatchReadCommand =
-                (tagGroup, StationNumber, TypeEnumtem) =>
-                {
-                    Tag firstTag = tagGroup.Tags.First();
-                    return firstTag.Location.BatchReadCommand((AddressTypeEnum)TypeEnumtem, tagGroup.Length, firstTag.IsBit, NetworkNumber, StationNumber);
-                };
-            GetEndPosition = (tag) => (int)(tag.Location + ReadMaxLenth);
+        }
+        /// <summary>
+        /// 生成报文
+        /// </summary>
+        /// <param name="tagGroup"></param>
+        /// <param name="StationNumber"></param>
+        /// <param name="TypeEnumtem"></param>
+        /// <returns></returns>
+        protected override byte[]? BatchReadCommand(TagGroup tagGroup, byte StationNumber, object TypeEnumtem)
+        {
+            Tag firstTag = tagGroup.Tags.First();
+            return firstTag.Location.BatchReadCommand((AddressTypeEnum)TypeEnumtem, tagGroup.Length, firstTag.IsBit, NetworkNumber, StationNumber);
         }
         /// <summary>
         /// 网络号，通常为0
@@ -31,9 +36,9 @@ namespace SEC.Driver.MC3E
             set;
         } = 0;
         /// <summary>
-        /// 最大读取长度
+        /// 读取最大长度
         /// </summary>
-        public int ReadMaxLenth = 960;
+        public override int ReadMaxLenth => 960;
 
         /// <summary>
         /// 发送并接收
@@ -113,6 +118,23 @@ namespace SEC.Driver.MC3E
                 }
             }
             return tag;
+        }
+
+        /// <summary>
+        ///  写入数据
+        /// </summary>
+        /// <param name="address"></param>
+        /// <param name="length"></param>
+        /// <param name="isBit"></param>
+        /// <returns></returns> 
+        public override bool Write(Tag tag, byte[] value)
+        {
+            if (tag.ClientAccess.Contains('W'))
+            {
+                byte[] command = tag.Location.BatchWriteCommand((AddressTypeEnum)tag.Type, value, tag.IsBit, NetworkNumber, tag.StationNumber);
+                return SendCommand(command) != null;
+            }
+            return false;
         }
     }
 }

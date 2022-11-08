@@ -12,7 +12,15 @@ namespace SEC.Driver
             Communication.SendTimeout = 5000;
             Communication.Connect();
         }
+        private readonly object _lock = new();
+        /// <summary>
+        /// 连接需求
+        /// </summary>
         public readonly ICommunication Communication;
+        /// <summary>
+        ///最大 读取长度
+        /// </summary>
+        public virtual int ReadMaxLenth => 124;
         /// <summary>
         /// 驱动连接状态
         /// </summary>
@@ -64,16 +72,28 @@ namespace SEC.Driver
         /// <returns></returns>
         public virtual byte[]? SendCommand(byte[] command)
         {
-            if (Communication.Send(command))
+            lock (_lock)
             {
-                Thread.Sleep(10);
-                return Communication.Receive();
+                if (Communication.Send(command))
+                {
+                    Thread.Sleep(10);
+                    return Communication.Receive();
+                }
+                return null;
             }
-            return null;
         }
-        protected Func<TagGroup, byte, object, byte[]>? BatchReadCommand;
+        /// <summary>
+        /// 生成报文
+        /// </summary>
+        /// <param name="tagGroup"></param>
+        /// <param name="StationNumber"></param>
+        /// <param name="TypeEnumtem"></param>
+        /// <returns></returns>
+        protected virtual byte[]? BatchReadCommand(TagGroup tagGroup, byte StationNumber, object TypeEnumtem)
+        {
+            throw new Exception("未实现");
+        }
 
-        protected Func<Tag, int> GetEndPosition = (tag) => { return 0; };
         /// <summary>
         /// tag分组
         /// </summary>
@@ -92,7 +112,7 @@ namespace SEC.Driver
                     {
                         TagGroup tagGroup = new()
                         {
-                            IsBit = tagGByBit.Key 
+                            IsBit = tagGByBit.Key
                         };
                         //排序
                         List<Tag> tagsList = tagGByTypeEnumtem.OrderBy(p => p.Location).ToList();
@@ -102,11 +122,12 @@ namespace SEC.Driver
                             Tag firstTag = tagGroup.Tags.First();
                             Tag lastTag = tagGroup.Tags.Last();
                             tagGroup.Length = (ushort)(lastTag.Location + Math.Ceiling(lastTag.DataLength / 2.0) - firstTag.Location);
-                            tagGroup.Command = BatchReadCommand?.Invoke(tagGroup, tagGByStationNumber.Key, tagGByTypeEnumtem.Key);
+                            tagGroup.Command = BatchReadCommand(tagGroup, tagGByStationNumber.Key, tagGByTypeEnumtem.Key);
                             tagGroup.StartAddress = (ushort)firstTag.Location;
                         }
                         //获取结束位置 
-                        int endTag = GetEndPosition.Invoke(tagsList.First());
+                        int GetEndPosition(Tag tag) => (int)(tag.Location + ReadMaxLenth);
+                        int endTag = GetEndPosition(tagsList.First());
                         foreach (var tag in tagsList)
                         {
                             if (tag.Location + tag.DataLength / 2 < endTag)
@@ -119,7 +140,7 @@ namespace SEC.Driver
                                 CreationReadCommand(tagGroup);
                                 tagGroup = new TagGroup();
                                 tagGroup.Tags.Add(tag);
-                                endTag = GetEndPosition.Invoke(tag);
+                                endTag = GetEndPosition(tag);
                             }
                         }
                         TagGroups.Add(tagGroup);
@@ -200,13 +221,13 @@ namespace SEC.Driver
                                    }
                                    else
                                    {
-                                       skipIndex = (int)(p.Location - tagGroup.StartAddress) + p.BitLocation;
+                                       skipIndex = (int)(p.Location - tagGroup.StartAddress);
                                    }
                                }
                                else
                                {
-                                   skipIndex = (int)(p.Location - tagGroup.StartAddress) * 2 + p.BitLocation;
-                               } 
+                                   skipIndex = (int)(p.Location - tagGroup.StartAddress) * 2;
+                               }
                                p.UpdateValue = BodyByte?
                                .Skip(skipIndex)
                                .Take(p.DataLength)
