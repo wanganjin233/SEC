@@ -1,6 +1,6 @@
 ﻿using SEC.Util;
 
-namespace SEC.Driver.ModbusRtu
+namespace SEC.Driver
 {
     public static class DriverExtend
     {

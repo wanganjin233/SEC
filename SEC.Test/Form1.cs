@@ -1,9 +1,5 @@
 
 using SEC.Driver;
-using SEC.Driver.Fins;
-using SEC.Driver.MC3E;
-using SEC.Driver.ModbusRtu;
-using SEC.Driver.ModebusTcp; 
 using System.Text;
 
 namespace SEC.Test

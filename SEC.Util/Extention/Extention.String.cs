@@ -447,7 +447,6 @@ namespace SEC.Util
         {
             return jsonStr == null ? JObject.Parse("{}") : JObject.Parse(jsonStr.Replace("&nbsp;", ""));
         }
-
         /// <summary>
         /// 将Json字符串转为JArray
         /// </summary>

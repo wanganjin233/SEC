@@ -1,6 +1,6 @@
 ﻿using SEC.Util;
 
-namespace SEC.Driver.ModbusRtu
+namespace SEC.Driver
 {
     public class ModbusRtu : BaseDriver
     {
@@ -9,7 +9,7 @@ namespace SEC.Driver.ModbusRtu
         {
             Communication.DataLengthLocation = 2;
             Communication.LengthReplenish = 2;
-            Communication.DataLengthType = LengthTypeEnum.Byte; 
+            Communication.DataLengthType = LengthTypeEnum.Byte;
         }
         /// <summary>
         /// 生成报文
@@ -43,7 +43,7 @@ namespace SEC.Driver.ModbusRtu
             int readLenth = BitConverter.ToUInt16(command.Reverse().ToArray(), 2);
             byte[] headBytes = new byte[3];
             Communication.HeadBytes.CopyTo(headBytes, 0);
-            headBytes[2] = isBit ? (byte)(command[2] / 8 + 1) : (byte)(readLenth*2);
+            headBytes[2] = isBit ? (byte)(command[2] / 8 + 1) : (byte)(readLenth * 2);
             var bytes = base.SendCommand(command);
             if (bytes != null)
             {
@@ -94,11 +94,11 @@ namespace SEC.Driver.ModbusRtu
         /// <param name="length"></param>
         /// <param name="isBit"></param>
         /// <returns></returns> 
-        public override bool Write(Tag tag, byte[] value)
+        public override bool Write(Tag tag, object? value)
         {
-            if (tag.ClientAccess.Contains('W'))
+            if (tag.ClientAccess.Contains('W') && value != null)
             {
-                byte[] command = ((ushort)tag.Location).BatchWriteCommand(value, tag.IsBit, tag.StationNumber);
+                byte[] command = ((ushort)tag.Location).BatchWriteCommand(tag.ObjectToBytes(value), tag.IsBit, tag.StationNumber);
                 return SendCommand(command) != null;
             }
             return false;

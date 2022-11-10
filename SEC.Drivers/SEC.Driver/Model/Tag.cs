@@ -18,6 +18,7 @@ namespace SEC.Driver
         /// 值
         /// </summary>
         private object? _Value;
+        private object? zoomValue;
         /// <summary>
         /// 缩放后的值
         /// </summary>
@@ -25,18 +26,7 @@ namespace SEC.Driver
         {
             get
             {
-                return DataType switch
-                {
-                    TagTypeEnum.Ushort => (ushort?)_Value / Magnification,
-                    TagTypeEnum.Short => (short?)_Value / Magnification,
-                    TagTypeEnum.Uint => (uint?)_Value / Magnification,
-                    TagTypeEnum.Int => (int?)_Value / Magnification,
-                    TagTypeEnum.Ulong => (ulong?)_Value / Magnification,
-                    TagTypeEnum.Long => (long?)_Value / Magnification,
-                    TagTypeEnum.Float => (float?)_Value / Magnification,
-                    TagTypeEnum.Double => (double?)_Value / Magnification,
-                    _ => null
-                };
+                return zoomValue;
             }
             set
             {
@@ -44,7 +34,7 @@ namespace SEC.Driver
                 {
                     if (DataType == TagTypeEnum.String || DataType == TagTypeEnum.Boole)
                     {
-                        Value = value; 
+                        Value = value;
                     }
                     else
                     {
@@ -68,21 +58,7 @@ namespace SEC.Driver
                 {
                     if (value != null)
                     {
-                        byte[] bytes = DataType switch
-                        {
-                            TagTypeEnum.Boole => BitConverter.GetBytes(Convert.ToBoolean(value.ToString())),
-                            TagTypeEnum.Ushort => BitConverter.GetBytes(Convert.ToUInt16(value.ToString())),
-                            TagTypeEnum.Short => BitConverter.GetBytes(Convert.ToInt16(value.ToString())),
-                            TagTypeEnum.Uint => BitConverter.GetBytes(Convert.ToUInt32(value.ToString())),
-                            TagTypeEnum.Int => BitConverter.GetBytes(Convert.ToInt32(value.ToString())),
-                            TagTypeEnum.Ulong => BitConverter.GetBytes(Convert.ToUInt64(value.ToString())),
-                            TagTypeEnum.Long => BitConverter.GetBytes(Convert.ToInt64(value.ToString())),
-                            TagTypeEnum.Float => BitConverter.GetBytes(Convert.ToSingle(value.ToString())),
-                            TagTypeEnum.Double => BitConverter.GetBytes(Convert.ToDouble(value.ToString())),
-                            TagTypeEnum.String => Encoding.GetEncoding(Coding).GetBytes((value.ToString() ?? string.Empty).PadRight(DataLength, '\0')),
-                            _ => throw new NotImplementedException("无法找到合适的转换")
-                        };
-                        baseDriver?.Write(this, bytes.DataSequence(Sort));
+                        baseDriver?.Write(this, value);
                     }
                 }
                 catch (Exception e)
@@ -91,6 +67,13 @@ namespace SEC.Driver
                 }
             }
         }
+        public object? SetValue
+        {
+            set
+            {
+                _Value = value;
+            }
+        } 
         /// <summary>
         /// 更新点位值
         /// </summary>
@@ -124,6 +107,18 @@ namespace SEC.Driver
                             TagTypeEnum.String => Encoding.GetEncoding(Coding).GetString(itemValue).Replace("\0", ""),
                             _ => throw new NotImplementedException("无法找到合适的转换")
                         };
+                        zoomValue = DataType switch
+                        {
+                            TagTypeEnum.Ushort => (ushort?)_Value / Magnification,
+                            TagTypeEnum.Short => (short?)_Value / Magnification,
+                            TagTypeEnum.Uint => (uint?)_Value / Magnification,
+                            TagTypeEnum.Int => (int?)_Value / Magnification,
+                            TagTypeEnum.Ulong => (ulong?)_Value / Magnification,
+                            TagTypeEnum.Long => (long?)_Value / Magnification,
+                            TagTypeEnum.Float => (float?)_Value / Magnification,
+                            TagTypeEnum.Double => (double?)_Value / Magnification,
+                            _ => null
+                        };
                         ValueChangeEvent?.Invoke(this);
                     }
                 }
@@ -137,7 +132,7 @@ namespace SEC.Driver
         /// <summary>
         /// 时间戳
         /// </summary>
-        public DateTime Timestamp => timestamp;
+        public DateTime Timestamp { get => timestamp; set { timestamp = value; } }
         /// <summary>
         /// 质量戳
         /// </summary>

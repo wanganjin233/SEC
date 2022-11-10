@@ -1,7 +1,7 @@
 ﻿using SEC.Util;
 using System.Text.RegularExpressions;
 
-namespace SEC.Driver.Fins
+namespace SEC.Driver
 {
     public class Fins : BaseDriver
     {
@@ -29,7 +29,7 @@ namespace SEC.Driver.Fins
         {
             Communication.HeadBytes = new byte[4] { 0x46, 0x49, 0x4E, 0x53 };
             Communication.DataLengthLocation = 4;
-            Communication.DataLengthType = LengthTypeEnum.Uint;
+            Communication.DataLengthType = LengthTypeEnum.ReUint;
         }
         /// <summary>
         /// 生成报文
@@ -141,11 +141,11 @@ namespace SEC.Driver.Fins
         /// <param name="length"></param>
         /// <param name="isBit"></param>
         /// <returns></returns> 
-        public override bool Write(Tag tag, byte[] value)
-        {
-            if (tag.ClientAccess.Contains('W'))
+        public override bool Write(Tag tag, object? value)
+        { 
+            if (tag.ClientAccess.Contains('W') && value != null)
             {
-                byte[] command = ((ushort)tag.Location).BatchWriteCommand((AddressTypeEnum)tag.Type, value, tag.IsBit, PLCNode, PCNode,tag.StationNumber, (byte)tag.BitLocation);
+                byte[] command = ((ushort)tag.Location).BatchWriteCommand((AddressTypeEnum)tag.Type, tag.ObjectToBytes(value), tag.IsBit, PLCNode, PCNode,tag.StationNumber, (byte)tag.BitLocation);
                 return SendCommand(command) != null;
             }
             return false;

@@ -1,7 +1,7 @@
 ﻿using SEC.Util;
 using System.Text.RegularExpressions;
 
-namespace SEC.Driver.MC3E
+namespace SEC.Driver
 {
     public class MC3E : BaseDriver
     {
@@ -127,11 +127,11 @@ namespace SEC.Driver.MC3E
         /// <param name="length"></param>
         /// <param name="isBit"></param>
         /// <returns></returns> 
-        public override bool Write(Tag tag, byte[] value)
+        public override bool Write(Tag tag, object? value)
         {
-            if (tag.ClientAccess.Contains('W'))
+            if (tag.ClientAccess.Contains('W') && value != null)
             {
-                byte[] command = tag.Location.BatchWriteCommand((AddressTypeEnum)tag.Type, value, tag.IsBit, NetworkNumber, tag.StationNumber);
+                byte[] command = tag.Location.BatchWriteCommand((AddressTypeEnum)tag.Type, tag.ObjectToBytes(value), tag.IsBit, NetworkNumber, tag.StationNumber);
                 return SendCommand(command) != null;
             }
             return false;

@@ -1,4 +1,4 @@
-﻿namespace SEC.Driver.ModebusTcp
+﻿namespace SEC.Driver
 {
 
     /// <summary>

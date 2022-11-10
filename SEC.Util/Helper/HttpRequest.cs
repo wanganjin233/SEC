@@ -1,7 +1,7 @@
 ﻿using ICSharpCode.SharpZipLib.GZip;
 using Newtonsoft.Json; 
 
-namespace SEC.Util.Helper
+namespace SEC.Util 
 {
     /// <summary>
     /// 基于HttpClient封装的请求类

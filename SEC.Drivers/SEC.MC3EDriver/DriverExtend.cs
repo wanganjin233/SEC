@@ -1,6 +1,6 @@
 ﻿using SEC.Util;
 
-namespace SEC.Driver.MC3E
+namespace SEC.Driver
 {
     public static class DriverExtend
     {

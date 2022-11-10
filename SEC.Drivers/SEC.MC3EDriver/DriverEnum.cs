@@ -1,4 +1,4 @@
-﻿namespace SEC.Driver.MC3E
+﻿namespace SEC.Driver
 {
     /// <summary>
     /// 寄存器地址类型

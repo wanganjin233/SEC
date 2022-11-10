@@ -1,0 +1,30 @@
+{
+  "Name": "Scanner98",
+  "EQU": "Scanner98",
+  "ConnectionString": "opc.tcp://172.27.35.2:49320",
+  "DriverType": "0ODBUS",
+  "Tags": [
+    {
+      "TagName": "Result",
+      "Address": "ns=2;s=Simulator.device01.ActInterval1",
+      "DataType": "Short",
+      "ClientAccess": "R/W",
+      "Description": "称重结果",
+      "EngUnits": "kg",
+      "Sort": "BADC",
+      "StationNumber": 1
+    },
+    {
+      "TagName": "asas",
+      "Address": "ns=2;s=Simulator.device01.ActInterval2",
+      "DataType": "Short",
+
+      "ClientAccess": "R/W",
+      "Description": "实时重量",
+      "EngUnits": "kg",
+      "Sort": "BADC",
+      "StationNumber": 1
+    }
+  ]
+
+}

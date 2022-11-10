@@ -1,4 +1,4 @@
-﻿namespace SEC.Driver.ModbusRtu
+﻿namespace SEC.Driver
 {
     /// <summary>
     /// 指令协议生成 

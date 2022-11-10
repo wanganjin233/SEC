@@ -8,15 +8,18 @@ namespace SEC.Driver
         public BaseDriver(string communicationStr)
         {
             Communication = Tools.ConnectionResolution(communicationStr);
-            Communication.ReceiveTimeout = 5000;
-            Communication.SendTimeout = 5000;
-            Communication.Connect();
+            if (Communication != null)
+            {
+                Communication.ReceiveTimeout = 5000;
+                Communication.SendTimeout = 5000;
+                Communication?.Connect();
+            } 
         }
         private readonly object _lock = new();
         /// <summary>
         /// 连接需求
         /// </summary>
-        public readonly ICommunication Communication;
+        public readonly ICommunication? Communication;
         /// <summary>
         ///最大 读取长度
         /// </summary>
@@ -24,7 +27,7 @@ namespace SEC.Driver
         /// <summary>
         /// 驱动连接状态
         /// </summary>
-        public virtual bool DriverState => Communication.Connected;
+        public virtual bool DriverState => Communication?.Connected??false;
         /// <summary>
         /// 点位组
         /// </summary>
@@ -60,7 +63,7 @@ namespace SEC.Driver
         /// <param name="Value"></param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception> 
-        public virtual bool Write(Tag tag, byte[] value)
+        public virtual bool Write(Tag tag,object? value)
         {
             throw new Exception("功能未实现");
         }
@@ -74,10 +77,10 @@ namespace SEC.Driver
         {
             lock (_lock)
             {
-                if (Communication.Send(command))
+                if (Communication?.Send(command)??false)
                 {
                     Thread.Sleep(10);
-                    return Communication.Receive();
+                    return Communication?.Receive();
                 }
                 return null;
             }
@@ -248,7 +251,7 @@ namespace SEC.Driver
         /// </summary>
         public void Stop()
         {
-            Communication.Dispose();
+            Communication?.Dispose();
             IsRun = false;
         }
     }

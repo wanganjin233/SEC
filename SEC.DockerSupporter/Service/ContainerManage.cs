@@ -22,37 +22,37 @@ namespace SEC.DockerSupporter
         public ContainerManage()
         { 
             var config = new DockerClientConfiguration();
-            DockerClient client = config.CreateClient();
-            var asd = Task.Run(async () =>
-                {
-                    //   await client.Images.CreateImageAsync(
-                    // new ImagesCreateParameters { FromSrc = "https://registry.docker-cn.com", FromImage = "mysql", Tag = "latest" }, null,
-                    // new Progress<JSONMessage>(message =>
-                    // {
-                    //     var sada = !string.IsNullOrEmpty(message.ErrorMessage)
-                    //         ? message.ErrorMessage
-                    //         : $"{message.ID} {message.Status} {message.ProgressMessage}";
-                    // }));
-                    //
+            //DockerClient client = config.CreateClient();
+            //var asd = Task.Run(async () =>
+            //    {
+            //           await client.Images.CreateImageAsync(
+            //         new ImagesCreateParameters { FromSrc = "https://registry.docker-cn.com", FromImage = "mysql", Tag = "latest" }, null,
+            //         new Progress<JSONMessage>(message =>
+            //         {
+            //             var sada = !string.IsNullOrEmpty(message.ErrorMessage)
+            //                 ? message.ErrorMessage
+            //                 : $"{message.ID} {message.Status} {message.ProgressMessage}";
+            //         }));
+            //        
+            //        
+            //         await client.Containers.CreateContainerAsync(new CreateContainerParameters()
+            //         {
+            //             Image = "fedora/memcached",
+            //             HostConfig = new HostConfig()
+            //             {
+            //                 DNS = new[] { "8.8.8.8", "8.8.4.4" }
+            //             }
+            //         });
+            //         
+            //        return await client.Images.ListImagesAsync(new ImagesListParameters() { All = true });
+            //    }).Result;
 
-                    // await client.Containers.CreateContainerAsync(new CreateContainerParameters()
-                    // {
-                    //     Image = "fedora/memcached",
-                    //     HostConfig = new HostConfig()
-                    //     {
-                    //         DNS = new[] { "8.8.8.8", "8.8.4.4" }
-                    //     }
-                    // });
-                    // 
-                    return await client.Images.ListImagesAsync(new ImagesListParameters() { All = true });
-                }).Result;
 
-
-            foreach (var item in asd)
-            {
-                Console.WriteLine(item.ID);
-            }
- 
+         //  foreach (var item in asd)
+         //  {
+         //      Console.WriteLine(item.ID);
+         //  }
+         //
 
 
         }

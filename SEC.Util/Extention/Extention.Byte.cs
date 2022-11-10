@@ -40,6 +40,23 @@ namespace SEC.Util
             return -1;
         }
         /// <summary>
+        /// 查找byte位置
+        /// </summary>
+        /// <param name="byte"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static int IndexOf(this IEnumerable<byte> bytes, byte value)
+        {
+            for (int i = 0; i < bytes.Count(); i++)
+            {
+                if (bytes.ElementAt(i) == value)
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+        /// <summary>
         /// 从后查找byte位置
         /// </summary>
         /// <param name="bytes"></param>
@@ -71,7 +88,6 @@ namespace SEC.Util
                 }
             }
             return true;
-
         }
         /// <summary>
         /// 切分bytes
@@ -119,7 +135,7 @@ namespace SEC.Util
                 {
                     byte[] data = bytes.Skip(startIndex + startBytes.Count()).Take(length).ToArray();
                     bytesList.Add(data);
-                    bytes = bytes.Skip(startIndex + startBytes.Count() + length);
+                    bytes = bytes.Skip(endIndex + endBytes.Count());
                 }
                 else
                 {
@@ -147,10 +163,10 @@ namespace SEC.Util
                     int length = dataLengthType switch
                     {
                         1 => _bytes[startIndex + dataLengthLocation],
-                        2 => BitConverter.ToUInt16(_bytes, dataLengthLocation),
-                        4 => BitConverter.ToInt32(_bytes, dataLengthLocation),
+                        2 => BitConverter.ToUInt16(_bytes, startIndex + dataLengthLocation),
+                        4 => BitConverter.ToInt32(_bytes, startIndex + dataLengthLocation),
                         _ => throw new NotImplementedException()
-                    }; 
+                    };
                     byte[] data = bytes.Skip(startIndex + dataLengthLocation + dataLengthType).Take(length).ToArray();
                     bytesList.Add(data);
                     bytes = bytes.Skip(startIndex + dataLengthLocation + dataLengthType + length);

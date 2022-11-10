@@ -1,5 +1,5 @@
 ﻿using SEC.Util;
-namespace SEC.Driver.ModebusTcp
+namespace SEC.Driver
 {
     public class ModbusTcp : BaseDriver
     {
@@ -8,7 +8,7 @@ namespace SEC.Driver.ModebusTcp
            : base(communicationStr)
         {
             Communication.DataLengthLocation = 4;
-            Communication.DataLengthType = LengthTypeEnum.ReUShort; 
+            Communication.DataLengthType = LengthTypeEnum.ReUShort;
         }
 
         #endregion
@@ -95,11 +95,11 @@ namespace SEC.Driver.ModebusTcp
         /// <param name="length"></param>
         /// <param name="isBit"></param>
         /// <returns></returns> 
-        public override bool Write(Tag tag, byte[] value)
+        public override bool Write(Tag tag, object? value)
         {
-            if (tag.ClientAccess.Contains('W'))
+            if (tag.ClientAccess.Contains('W') && value != null)
             {
-                byte[] command = ((ushort)tag.Location).BatchWriteCommand(value, tag.IsBit, tag.StationNumber);
+                byte[] command = ((ushort)tag.Location).BatchWriteCommand(tag.ObjectToBytes(value), tag.IsBit, tag.StationNumber);
                 return SendCommand(command) != null;
             }
             return false;
