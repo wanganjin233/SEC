@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using SEC.Util;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
@@ -25,7 +26,7 @@ namespace SEC.Driver
         /// <summary>
         /// 数据长度类型
         /// </summary>
-        public LengthTypeEnum DataLengthType { get; set; } = LengthTypeEnum.Byte; 
+        public LengthTypeEnum DataLengthType { get; set; } = LengthTypeEnum.Byte;
         /// <summary>
         /// 长度补充
         /// </summary>
@@ -41,9 +42,29 @@ namespace SEC.Driver
         /// </summary>
         public event ReceiveDelegate? ReceiveEvent;
         /// <summary>
-        /// 客户端列表
+        /// 断开委托
         /// </summary>
-        protected List<Socket> Sockets = new();
+        /// <param name="client"></param>
+        /// <param name="bytes"></param>
+        public delegate void DisconnectDelegate(Socket socket);
+        /// <summary>
+        /// 断开事件
+        /// </summary>
+        public event DisconnectDelegate? DisconnectEvent;
+        /// <summary>
+        /// 连接委托
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="bytes"></param>
+        public delegate void ConnectDelegate(Socket socket);
+        /// <summary>
+        /// 连接事件
+        /// </summary>
+        public event ConnectDelegate? ConnectEvent;
+        /// <summary>
+        /// 客户端列表
+        /// </summary> 
+        protected UsingLock<List<Socket>> Sockets = new(new List<Socket>());
         /// <summary>
         /// 发送超时时间
         /// </summary>
@@ -101,18 +122,22 @@ namespace SEC.Driver
         /// <param name="client"></param>
         private void AddClient(Socket socket)
         {
-            if (Sockets.Count >= MaxConnect)
+            using (Sockets.Write())
             {
-                socket.Send(Encoding.UTF8.GetBytes("超出服务器连接数上限"));
-                Console.WriteLine("超出服务器连接数上限");
-                RemoveClient(socket);
-            }
-            else
-            {
-                socket.ReceiveTimeout = ReceiveTimeout;
-                socket.SendTimeout = SendTimeout;
-                Sockets.Add(socket);
-                ReceiveLoop(socket);
+                if (Sockets.Data?.Count >= MaxConnect)
+                {
+                    socket.Send(Encoding.UTF8.GetBytes("超出服务器连接数上限"));
+                    Console.WriteLine("超出服务器连接数上限");
+                    RemoveClient(socket);
+                }
+                else
+                {
+                    ConnectEvent?.Invoke(socket);
+                    socket.ReceiveTimeout = ReceiveTimeout;
+                    socket.SendTimeout = SendTimeout;
+                    Sockets.Data?.Add(socket);
+                    ReceiveLoop(socket);
+                }
             }
         }
         /// <summary>
@@ -121,13 +146,17 @@ namespace SEC.Driver
         /// <param name="client"></param>
         private void RemoveClient(Socket socket)
         {
-            if (Sockets.Remove(socket))
+            using (Sockets.Write())
             {
-                if (socket.Connected)
-                    socket?.Disconnect(false);
-                socket?.Close();
-                socket?.Dispose();
-                GC.Collect();
+                if (Sockets.Data?.Remove(socket)??false)
+                {
+                    DisconnectEvent?.Invoke(socket);
+                    if (socket.Connected)
+                        socket?.Disconnect(false);
+                    socket?.Close();
+                    socket?.Dispose();
+                    GC.Collect();
+                }
             }
         }
         /// <summary>
@@ -166,7 +195,7 @@ namespace SEC.Driver
         /// <param name="bytes"></param>
         /// <returns></returns>
         public bool Send(Socket socket, byte[] bytes)
-        { 
+        {
             bool success = false;
             try
             {
@@ -181,7 +210,7 @@ namespace SEC.Driver
                 Console.WriteLine(e.Message);
             }
             return success;
-             
+
         }
         /// <summary>
         /// 发送到所有客户端
@@ -189,9 +218,12 @@ namespace SEC.Driver
         /// <param name="bytes"></param> 
         public void Send(byte[] bytes)
         {
-            foreach (var socket in Sockets)
+            using (Sockets.Write())
             {
-                ThreadPool.QueueUserWorkItem(p => Send(socket, bytes));
+                foreach (var socket in Sockets.Data)
+                {
+                    ThreadPool.QueueUserWorkItem(p => Send(socket, bytes));
+                }
             }
         }
         /// <summary>
@@ -199,12 +231,15 @@ namespace SEC.Driver
         /// </summary>
         public void Dispose()
         {
-            foreach (var socket in Sockets)
+            using (Sockets.Write())
             {
-                if (socket.Connected)
-                    socket?.Disconnect(false);
-                socket?.Close();
-                socket?.Dispose();
+                foreach (var socket in Sockets.Data)
+                {
+                    if (socket.Connected)
+                        socket?.Disconnect(false);
+                    socket?.Close();
+                    socket?.Dispose();
+                }
             }
             if (ServerSocket.Connected)
                 ServerSocket?.Disconnect(false);

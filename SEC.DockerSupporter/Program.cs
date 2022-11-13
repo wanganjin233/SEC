@@ -9,6 +9,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHostedService((sp) => sp.GetRequiredService<ContainerManage>());
+builder.Services.AddHostedService((sp) => sp.GetRequiredService<DriverManage>());
+
+builder.Services.AddSingleton<DriverManage>();
 builder.Services.AddSingleton<ContainerManage>();
 var app = builder.Build();
 
