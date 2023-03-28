@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>dotnet-CEE.DefaultRecipe-eb7059d5-cf20-4967-8ecc-0ccc92d7c050</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\SEC.CommUtil\SEC.CommUtil.csproj" />
+    <ProjectReference Include="..\..\SEC.Models\SEC.Models.csproj" />
+  </ItemGroup>
+</Project>

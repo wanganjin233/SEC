@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Worker;Microsoft.NET.Sdk.Publish">
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>dotnet-SEC.Docker.Driver-a9284ec5-1a15-4665-b7c3-d408ad6dcfec</UserSecretsId>
+	  
+	  <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..</DockerfileContext>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\SEC.Communication\SEC.Communication.csproj" />
+    <ProjectReference Include="..\..\SEC.Drivers\SEC.Driver.Fins\SEC.Driver.Fins.csproj" />
+    <ProjectReference Include="..\..\SEC.Drivers\SEC.Driver.MC3E\SEC.Driver.MC3E.csproj" />
+    <ProjectReference Include="..\..\SEC.Drivers\SEC.Driver.ModbusRtu\SEC.Driver.ModbusRtu.csproj" />
+    <ProjectReference Include="..\..\SEC.Drivers\SEC.Driver.ModbusTcp\SEC.Driver.ModbusTcp.csproj" />
+    <ProjectReference Include="..\..\SEC.Drivers\SEC.Driver.OPCUA\SEC.Driver.OPCUA.csproj" />
+    <ProjectReference Include="..\..\SEC.Drivers\SEC.Driver\SEC.Driver.csproj" />
+    <ProjectReference Include="..\..\SEC.Models\SEC.Models.csproj" />
+    <ProjectReference Include="..\..\SEC.Util\SEC.Util.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ReceiveMethod\" />
+    <Folder Include="Util\" />
+  </ItemGroup>
+</Project>

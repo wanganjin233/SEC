@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SEC.Enum\SEC.Enum.csproj" />
+    <ProjectReference Include="..\SEC.Interface\SEC.Interface.csproj" />
+    <ProjectReference Include="..\SEC.Util\SEC.Util.csproj" />
+  </ItemGroup>
+
+</Project>

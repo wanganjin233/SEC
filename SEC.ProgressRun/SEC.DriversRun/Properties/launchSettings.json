@@ -1,0 +1,13 @@
+{
+  "profiles": {
+    "SEC.DriversRun": {
+      "commandName": "Project",
+      "commandLineArgs": "127.0.0.1:10000\r\nH-ME-ENG-002-01",
+      "workingDirectory": "D:\\SEC\\SEC.ProgressRun\\SEC.DriversRun\\bin\\Debug\\net7.0",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      },
+      "dotnetRunMessages": true
+    }
+  }
+}

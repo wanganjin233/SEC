@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>dotnet-CEE.ChuangFeng-ccc78d75-1b23-4bb0-9676-221f39994dfa</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..</DockerfileContext>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\CEE.Models\CEE.Models.csproj" />
+    <ProjectReference Include="..\..\SEC.CommUtil\SEC.CommUtil.csproj" />
+    <ProjectReference Include="..\..\SEC.Models\SEC.Models.csproj" />
+    <ProjectReference Include="..\..\SEC.Util\SEC.Util.csproj" />
+  </ItemGroup>
+</Project>

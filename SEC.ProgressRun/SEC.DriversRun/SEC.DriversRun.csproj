@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>dotnet-SEC.DriversRun-c74036f0-2e45-42f8-92cf-e24cbcf80053</UserSecretsId>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PackageId>$(AssemblyName)</PackageId>
+    <Product>$(AssemblyName)</Product>
+    <Authors>$(AssemblyName)</Authors>
+    <Company>$(Authors)</Company>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\SEC.CommUtil\SEC.CommUtil.csproj" />
+    <ProjectReference Include="..\..\SEC.Drivers\SEC.Driver.Fins\SEC.Driver.Fins.csproj" />
+    <ProjectReference Include="..\..\SEC.Drivers\SEC.Driver.MC3E\SEC.Driver.MC3E.csproj" />
+    <ProjectReference Include="..\..\SEC.Drivers\SEC.Driver.ModbusRtu\SEC.Driver.ModbusRtu.csproj" />
+    <ProjectReference Include="..\..\SEC.Drivers\SEC.Driver.ModbusTcp\SEC.Driver.ModbusTcp.csproj" />
+    <ProjectReference Include="..\..\SEC.Drivers\SEC.Driver.OPCUA\SEC.Driver.OPCUA.csproj" />
+    <ProjectReference Include="..\..\SEC.Drivers\SEC.Driver\SEC.Driver.csproj" />
+    <ProjectReference Include="..\..\SEC.Models\SEC.Models.csproj" />
+  </ItemGroup>
+</Project>
